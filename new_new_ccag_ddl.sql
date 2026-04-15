@@ -37,10 +37,12 @@ CREATE TABLE Address (
 -- ============================================================
 CREATE TABLE Organization (
     org_id INT PRIMARY KEY,
+    address_id INT NOT NULL,
     org_name VARCHAR(255) UNIQUE,
     phone_number VARCHAR(20),
     email VARCHAR(100),
-    contact_person VARCHAR(100)
+    contact_person VARCHAR(100),
+    FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );
 
 -- ============================================================
@@ -49,17 +51,19 @@ CREATE TABLE Organization (
 CREATE TABLE Event (
     event_id INT PRIMARY KEY,
     org_id INT NOT NULL,
+    address_id INT NOT NULL,
     event_name VARCHAR(255) NOT NULL,
     event_type VARCHAR(50) NOT NULL,
     event_location_name VARCHAR(150),
     individuals_served INT CHECK (individuals_served > 0),
     notes TEXT,
     FOREIGN KEY (org_id) REFERENCES Organization(org_id)
+    FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );
 
--- ============================================================
--- Event_Address 
---new table
+/*-- ============================================================
+-- Event_Address being deleted
+--new table 
 -- ============================================================
 CREATE TABLE Event_Address (
     event_id INT,
@@ -67,7 +71,7 @@ CREATE TABLE Event_Address (
     PRIMARY KEY (event_id, address_id),
     FOREIGN KEY (event_id) REFERENCES Event(event_id),
     FOREIGN KEY (address_id) REFERENCES Address(address_id)
-);
+);*/
 
 -- ============================================================
 -- Personnel Table (Staff and Volunteers)
@@ -96,7 +100,8 @@ CREATE TABLE Event_Personnel (
 -- ============================================================
 CREATE TABLE Disability_Type (
     disability_type_id INT PRIMARY KEY,
-    disability_name VARCHAR(100) UNIQUE
+    disability_name VARCHAR(100) UNIQUE,
+    disability_description TEXT
 );
 
 -- ============================================================
