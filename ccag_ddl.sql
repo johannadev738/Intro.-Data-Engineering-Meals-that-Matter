@@ -69,7 +69,7 @@ CREATE TABLE event (
         FOREIGN KEY (org_id) REFERENCES organization(org_id)
 );
 
--- ============================================================
+-- ============================================================ 
 -- TABLE 4: participant_survey
 -- One row per participant (person with disability) per event.
 -- Based on Johanna's Table 2 / the food pantry survey link.

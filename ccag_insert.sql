@@ -665,7 +665,7 @@ Query 2.1 – Event Staffing Summary
 Purpose:
 Compare attendance with staffing levels (staff + volunteers)
 and calculate workload per worker along with recommended staffing.
--------------------------------------------------------------------------(ADD-LINE)---------- *
+-------------------------------------------------------------------------(ADD-LINE)----------*
 
 SELECT
     e.event_id,
@@ -814,15 +814,15 @@ ORDER BY e.event_id;
 
 --SELECT * 
 --FROM attendance_levels
---------------------------------------------------------------------------------(End-Task 2)-----------------------------------------------------------------------------------/
+--------------------------------------------------------------------------------(End-Task 2)-----------------------------------------------------------------------------------*/
 
 
 
---------------------------------------------------------------------------------(START-Task 3)-----------------------------------------------------------------------------------/
+/*--------------------------------------------------------------------------------(START-Task 3)-----------------------------------------------------------------------------------*
 --TASK: CCAG administrators want to compare pre-event expectations 
 	--and post-event outcomes to measure change in participant experience and 
 	--determine whether Meals That Matter is meeting community needs.
--------------------------------------------------------------------------------*/
+----------------------------------------------------------------------------------ADD LINE-----------*
 SELECT
     e.event_id,
     e.event_name,
@@ -856,7 +856,7 @@ ORDER BY e.event_date;
 
 
 	
---------------------------------------------------------------------------------(End-Task 3)-----------------------------------------------------------------------------------/
+--------------------------------------------------------------------------------(End-Task 3)-----------------------------------------------------------------------------------*/
 
 
 
@@ -864,7 +864,7 @@ ORDER BY e.event_date;
 /*CCAG administrators want to identify which disability groups 
 reported the highest and lowest satisfaction levels so that future 
 activities and food distribution strategies can be better tailored to participant needs.
------------------------------------------------------------------------------------------*
+---------------------------------------------------------------------------------------------ADD LINE--*
 SELECT
     COALESCE(dt.disability_name, 'Not Specified') AS disability_group,
     
@@ -885,8 +885,88 @@ ORDER BY avg_satisfaction DESC;
 
 
 
---------------------------------------------------------------------------------(End-Task 4)-----------------------------------------------------------------------------------/
+--------------------------------------------------------------------------------(End-Task 4)-----------------------------------------------------------------------------------*/
 
 
 
+
+
+
+
+/*--------------------------------------------------------------------------------(START-Task 5)-----------------------------------------------------------------------------------*/
+/*CCAG administrators want to generate a summary report of participants served by event location, date, 
+and zip code, and compare average participation levels across locations to identify above- and below-average community reach.
+-----------------------------------------------------------------------------------------------------------------------------------ADD LINE---*
+
+WITH location_stats AS (
+    SELECT 
+        e.event_location_name,
+        e.zip_code,
+
+        COUNT(e.event_id) AS total_events,
+        SUM(e.individuals_served) AS total_participants_served,
+        ROUND(AVG(e.individuals_served), 2) AS avg_participants_served
+
+    FROM event e
+
+    GROUP BY 
+        e.event_location_name,
+        e.zip_code
+),
+
+overall_avg AS (
+    SELECT 
+        AVG(individuals_served) AS overall_avg_participants
+    FROM event
+)
+
+SELECT
+    ls.*,
+
+    CASE
+        WHEN ls.avg_participants_served > oa.overall_avg_participants THEN 'Above Average'
+        WHEN ls.avg_participants_served < oa.overall_avg_participants THEN 'Below Average'
+        ELSE 'Average'
+    END AS performance_level
+
+FROM location_stats ls
+CROSS JOIN overall_avg oa
+
+ORDER BY ls.avg_participants_served DESC;
+
+--------------------------------------------------------------------------------(END-Task 5)-----------------------------------------------------------------------------------*/
+
+
+
+/*--------------------------------------------------------------------------------(START-Task 6)-----------------------------------------------------------------------------------*/
+/*CCAG administrators want to analyze retention and engagement by 
+identifying how many participants began and completed the program or 
+event process, so they can better understand drop-off rates.
+----------------------------------------------------------------------------ADD LINE-------------*
+SELECT
+    ps.visit_frequency,
+
+    COUNT(ps.response_id) AS total_participants,
+
+    ROUND(
+        100.0 * SUM(CASE WHEN ps.would_participate_again = TRUE THEN 1 ELSE 0 END)
+        / COUNT(ps.response_id),
+        2
+    ) AS participation_rate
+
+FROM participant_survey ps
+
+GROUP BY ps.visit_frequency
+
+ORDER BY participation_rate DESC;
+
+
+--------------------------------------------------------------------------------(END-Task 6)-----------------------------------------------------------------------------------*/
+
+
+
+/*--------------------------------------------------------------------------------(START-Task 7)-----------------------------------------------------------------------------------*/
+/*
+
+---------------------------------------------------*/
 
