@@ -542,7 +542,7 @@ INSERT INTO staff_volunteer_survey (event_id, role_type, team_area, first_time, 
 
 
 
-----------------------------------------------------TASK--------------------------------------------*/
+**********************************************************************************(START-TASK 1)*************************************************************************************/
 
 
 /*************************(Task 1)*************/
@@ -563,8 +563,12 @@ GROUP BY o.org_name
 ORDER BY avg_satisfaction DESC;
 *************************************************************************************/
 
-/************
------insert collumn of pre-meal and post-meeals , alter and update and generate additional data.
+
+
+
+
+/*******************************************************SIDE TASK: ALter event table ********************************************************
+-----insert collumns of pre-meal and post-meeals , alter and update and generate additional data.
 
 
 
@@ -639,5 +643,250 @@ SET
         [FLOOR(RANDOM() * 10 + 1)]
 
 WHERE event_id >= 4;
-************/
+
+**********************************************************************************(END- TASK 1)*************************************************************************************/
+
+
+
+
+
+
+
+/**********************************************************************************(Start- TASK 2)**********************************************************************************************/
+ -- EVENT STAFFING AND ATTENDANCE ANALYSIS
+--Purpose:
+--Analyze event attendance, staffing levels, and volunteer needs
+--to evaluate operational efficiency and improve future planning.
+/************************************************************************************************/
+
+
+/* --------------------------------------------------------
+Query 2.1 – Event Staffing Summary
+Purpose:
+Compare attendance with staffing levels (staff + volunteers)
+and calculate workload per worker along with recommended staffing.
+-------------------------------------------------------------------------(ADD-LINE)---------- *
+
+SELECT
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.individuals_estimated,
+    e.individuals_served,
+
+    COUNT(svs.staff_response_id) AS total_workers,
+
+    SUM(CASE WHEN svs.role_type = 'Volunteer' THEN 1 ELSE 0 END) AS total_volunteers,
+    SUM(CASE WHEN svs.role_type = 'Staff' THEN 1 ELSE 0 END) AS total_staff,
+
+    ROUND(
+        e.individuals_served::numeric / NULLIF(COUNT(svs.staff_response_id), 0),
+        2
+    ) AS attendees_per_worker,
+
+    CEILING(e.individuals_served::numeric / 10) AS recommended_total_workers,
+
+    CEILING(e.individuals_served::numeric / 12) AS recommended_volunteers
+
+FROM event e
+LEFT JOIN staff_volunteer_survey svs
+    ON e.event_id = svs.event_id
+
+GROUP BY
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.individuals_estimated,
+    e.individuals_served
+
+ORDER BY e.individuals_served DESC;
+-------------------------------------------------------------------------------------*/
+
+
+
+/* --------------------------------------------------------
+Query 2.2 – Attendance Level Classification Table
+Purpose:
+Define attendance ranges (Low, Medium, High, Above High)
+and assign recommended volunteer counts for each level.
+-------------------------------------------------------------------------(ADD-LINE)---------- *
+
+CREATE TABLE attendance_levels (
+    level_id SERIAL PRIMARY KEY,
+    level_name VARCHAR(20) NOT NULL UNIQUE,
+    min_people INT NOT NULL,
+    max_people INT NOT NULL,
+    recommended_volunteers INT NOT NULL
+);
+
+INSERT INTO attendance_levels (level_name, min_people, max_people, recommended_volunteers) VALUES
+('Low', 0, 40, 3),
+('Medium', 41, 80, 6),
+('High', 81, 120, 10),
+('Above High', 121, 1000, 15);
+
+----------------------------------------------------------------------------------------------------*/
+
+
+/* --------------------------------------------------------
+Query 2.3 – Estimated vs Actual Attendance Comparison
+Purpose:
+Compare estimated attendance levels with actual attendance
+to evaluate planning accuracy and determine differences.
+-------------------------------------------------------------------------(ADD-LINE)---------- *
+
+SELECT
+    e.event_id,
+    e.event_name,
+    e.individuals_estimated,
+    est.level_name AS estimated_level,
+    est.recommended_volunteers AS recommended_volunteers_by_estimate,
+    e.individuals_served,
+    act.level_name AS actual_level,
+    act.recommended_volunteers AS recommended_volunteers_by_actual,
+    (e.individuals_served - e.individuals_estimated) AS attendance_difference
+
+FROM event e
+
+JOIN attendance_levels est
+    ON e.individuals_estimated BETWEEN est.min_people AND est.max_people
+
+JOIN attendance_levels act
+    ON e.individuals_served BETWEEN act.min_people AND act.max_people
+
+ORDER BY e.event_id;
+-----------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+/* --------------------------------------------------------
+Query 2.4 – Volunteer Gap Analysis
+Purpose:
+Compare actual volunteer counts with recommended levels
+to identify understaffed or overstaffed events.
+-------------------------------------------------------------------------(ADD-LINE)---------- *
+
+SELECT
+    e.event_id,
+    e.event_name,
+    e.individuals_estimated,
+    est.level_name AS estimated_level,
+    est.recommended_volunteers AS recommended_volunteers_by_estimate,
+    e.individuals_served,
+    act.level_name AS actual_level,
+    act.recommended_volunteers AS recommended_volunteers_by_actual,
+
+    SUM(CASE WHEN svs.role_type = 'Volunteer' THEN 1 ELSE 0 END) AS actual_volunteers,
+
+    SUM(CASE WHEN svs.role_type = 'Volunteer' THEN 1 ELSE 0 END)
+      - act.recommended_volunteers AS volunteer_gap
+
+FROM event e
+
+JOIN attendance_levels est
+    ON e.individuals_estimated BETWEEN est.min_people AND est.max_people
+
+JOIN attendance_levels act
+    ON e.individuals_served BETWEEN act.min_people AND act.max_people
+
+LEFT JOIN staff_volunteer_survey svs
+    ON e.event_id = svs.event_id
+
+GROUP BY
+    e.event_id,
+    e.event_name,
+    e.individuals_estimated,
+    est.level_name,
+    est.recommended_volunteers,
+    e.individuals_served,
+    act.level_name,
+    act.recommended_volunteers
+
+ORDER BY e.event_id;
+------------------------------------------------------------------------*/
+
+
+
+--SEE ATTENDENCE LEVEL CHART
+
+--SELECT * 
+--FROM attendance_levels
+--------------------------------------------------------------------------------(End-Task 2)-----------------------------------------------------------------------------------/
+
+
+
+--------------------------------------------------------------------------------(START-Task 3)-----------------------------------------------------------------------------------/
+--TASK: CCAG administrators want to compare pre-event expectations 
+	--and post-event outcomes to measure change in participant experience and 
+	--determine whether Meals That Matter is meeting community needs.
+-------------------------------------------------------------------------------*/
+SELECT
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.individuals_estimated,
+    e.individuals_served,
+    (e.individuals_served - e.individuals_estimated) AS attendance_difference,
+
+    CASE
+        WHEN e.individuals_served > e.individuals_estimated THEN 'Underestimated'
+        WHEN e.individuals_served < e.individuals_estimated THEN 'Overestimated'
+        ELSE 'Accurate'
+    END AS planning_status,
+
+    ROUND(AVG(ps.program_satisfaction), 2) AS avg_satisfaction,
+    ROUND(AVG(ps.event_met_needs), 2) AS avg_needs_met,
+    COUNT(ps.response_id) AS total_participant_responses
+
+FROM event e
+LEFT JOIN participant_survey ps
+    ON e.event_id = ps.event_id
+
+GROUP BY
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.individuals_estimated,
+    e.individuals_served
+
+ORDER BY e.event_date;
+
+
+	
+--------------------------------------------------------------------------------(End-Task 3)-----------------------------------------------------------------------------------/
+
+
+
+--------------------------------------------------------------------------------(START-Task 4)-----------------------------------------------------------------------------------/
+/*CCAG administrators want to identify which disability groups 
+reported the highest and lowest satisfaction levels so that future 
+activities and food distribution strategies can be better tailored to participant needs.
+-----------------------------------------------------------------------------------------*
+SELECT
+    COALESCE(dt.disability_name, 'Not Specified') AS disability_group,
+    
+    ROUND(AVG(ps.program_satisfaction), 2) AS avg_satisfaction,
+    ROUND(AVG(ps.event_met_needs), 2) AS avg_needs_met,
+    
+    COUNT(ps.response_id) AS total_responses
+
+FROM participant_survey ps
+
+LEFT JOIN disability_type dt
+    ON ps.disability_type_id = dt.disability_type_id
+
+GROUP BY COALESCE(dt.disability_name, 'Not Specified')
+
+ORDER BY avg_satisfaction DESC;
+
+
+
+
+--------------------------------------------------------------------------------(End-Task 4)-----------------------------------------------------------------------------------/
+
+
+
 
