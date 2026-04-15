@@ -6,13 +6,14 @@ Sponsor: Collaboration Care Advocacy Group
 Team: Emmanuela Fleurant , Johanna Devilme (team lead) , Paul Perez
 
 Description:
-All updates in chronological order and action will be in team leads hosting account (this current repository).
+This repository serves as the official team lead repository for this group project. 
+All updates are maintained here in chronological order to ensure proper organization 
+and version control across team contributions.
 
-Old repository that shall not be updated further and only in this one is: 
-  https://github.com/emmanuelafleurant/databasesystem
+The following repository is no longer being updated:
+https://github.com/emmanuelafleurant/databasesystem
 
-
-githubs of collaborators:
+Githubs of collaborators (All Star Team):
   * Johanna Devilme (team lead):  [@johannadev738 ](https://github.com/johannadev738/)
   * Emmanuela Fleurant : [@emmanuelafleurant ](https://github.com/emmanuelafleurant/)
   * Paul Perez : [@pperez44 ](https://github.com/pperez44/)
