@@ -1,9 +1,11 @@
+/*
 -- ============================================================
 -- COP 3710 - Course Project
 -- Organization: Collaborative Care Advocacy Group
 -- Program: Meals That Matter
 -- File: Data Population (INSERT) - Version 2
 -- ============================================================
+
 
 -- ============================================================
 -- ORGANIZATIONS
@@ -533,3 +535,109 @@ INSERT INTO staff_volunteer_survey (event_id, role_type, team_area, first_time, 
 (103,'Volunteer','Distribution line', FALSE,5,4,5,5,5,TRUE,TRUE,'2025-11-26'),
 (104,'Staff',    'Cleanup',           FALSE,4,4,4,4,4,TRUE,TRUE,'2025-12-24'),
 (104,'Volunteer','Packing',           TRUE, 5,5,5,5,5,TRUE,TRUE,'2025-12-24');
+
+
+
+
+
+
+
+----------------------------------------------------TASK--------------------------------------------*/
+
+
+/*************************(Task 1)*************/
+
+--Organizations that had the highest participant satisfaction.
+--observation: 
+
+/*******************************************(Press / )**
+SELECT
+    o.org_name,
+    ROUND(AVG(ps.program_satisfaction), 2) AS avg_satisfaction,
+    ROUND(AVG(ps.event_met_needs), 2) AS avg_needs_met,
+    COUNT(ps.response_id) AS total_responses
+FROM organization o
+JOIN event e ON o.org_id = e.org_id
+JOIN participant_survey ps ON e.event_id = ps.event_id
+GROUP BY o.org_name
+ORDER BY avg_satisfaction DESC;
+*************************************************************************************/
+
+/************
+-----insert collumn of pre-meal and post-meeals , alter and update and generate additional data.
+
+
+
+ALTER TABLE event
+ADD COLUMN individuals_estimated INT,
+ADD COLUMN enough_volunteers BOOLEAN,
+ADD COLUMN personal_org_distrib_freq VARCHAR(50),
+ADD COLUMN participate_again BOOLEAN,
+ADD COLUMN positive_impacts TEXT;
+
+UPDATE event
+SET 
+    individuals_estimated = 15,
+    enough_volunteers = TRUE,
+    personal_org_distrib_freq = 'biweekly',
+    participate_again = TRUE,
+    positive_impacts = 'Our individuals were very happy and felt appreciated and cared for.'
+WHERE event_id = 1;
+
+
+UPDATE event
+SET 
+    individuals_estimated = 90,
+    enough_volunteers = TRUE,
+    personal_org_distrib_freq = 'daily',
+    participate_again = TRUE,
+    positive_impacts = 'Provided a wonderful family style Thanksgiving meal for a Life Skills Program. This meal was the only Thanksgiving meal a few of the individuals with disabilities would receive this year. A huge thank you!'
+WHERE event_id = 2;
+
+
+UPDATE event
+SET 
+    individuals_estimated = 28,
+    enough_volunteers = TRUE,
+    personal_org_distrib_freq = 'occasionally',
+    participate_again = TRUE,
+    positive_impacts = 'It was the last day of camp, and we try to make a quick lunch before packing up time, it was just perfect!'
+WHERE event_id = 3;
+
+
+UPDATE event
+SET
+    individuals_estimated = FLOOR(RANDOM() * 120 + 20)::INT, -- between 20–140
+
+    enough_volunteers = CASE 
+        WHEN RANDOM() > 0.2 THEN TRUE   -- ~80% yes
+        ELSE FALSE
+    END,
+
+    personal_org_distrib_freq = 
+        (ARRAY['daily', 'weekly', 'biweekly', 'monthly', 'occasionally'])
+        [FLOOR(RANDOM() * 5 + 1)],
+
+    participate_again = CASE 
+        WHEN RANDOM() > 0.15 THEN TRUE  -- ~85% yes
+        ELSE FALSE
+    END,
+
+    positive_impacts = 
+        (ARRAY[
+            'Participants expressed gratitude and satisfaction.',
+            'Meals helped reduce food insecurity for families.',
+            'Improved community engagement and support.',
+            'Participants enjoyed the variety and quality of meals.',
+            'Provided reliable access to nutritious meals.',
+            'Helped families during a difficult financial period.',
+            'Volunteers created a welcoming and supportive environment.',
+            'Some participants noted delays but still appreciated the support.',
+            'Food portions could improve but overall helpful.',
+            'Event ran smoothly with strong participation.'
+        ])
+        [FLOOR(RANDOM() * 10 + 1)]
+
+WHERE event_id >= 4;
+************/
+
