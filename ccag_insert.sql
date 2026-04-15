@@ -965,8 +965,1281 @@ ORDER BY participation_rate DESC;
 
 
 
-/*--------------------------------------------------------------------------------(START-Task 7)-----------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------(UPDATING THE TABLE)-----------------------------------------------------------------------------------*/
+/*
+--part 1:
+UPDATE event
+SET event_location_name = 'Easterseals Southwest Florida'
+WHERE event_location_name = 'Easterseals SWFL';
+
+UPDATE event
+SET event_location_name = 'Community Resource Network'
+WHERE event_location_name = 'Community Resource Ntwk';
+
+UPDATE event
+SET event_location_name = 'Boys & Girls Club of Collier County'
+WHERE event_location_name = 'Boys & Girls Club';
+
+UPDATE event
+SET event_location_name = 'United Cerebral Palsy of SWFL'
+WHERE event_location_name = 'UCP of SWFL';
+
+UPDATE event
+SET event_location_name = 'Sunshine Adult Day Center'
+WHERE event_location_name = 'Sunshine Adult Day Ctr';
+
+UPDATE event
+SET event_location_name = 'New Horizons of SWFL'
+WHERE event_location_name = 'New Horizons SWFL';
+
+UPDATE event
+SET event_location_name = 'Senior Friendship Centers'
+WHERE event_location_name = 'Senior Friendship Ctrs';
+
+UPDATE event
+SET event_location_name = 'Ability Works Florida'
+WHERE event_location_name = 'Ability Works FL';
+
+UPDATE event
+SET event_location_name = 'Gulf Coast Abilities Center'
+WHERE event_location_name = 'Gulf Coast Abilities';
+
+UPDATE event
+SET event_location_name = 'Lighthouse of SWFL'
+WHERE event_location_name = 'Lighthouse of SWFL';
+
+UPDATE event
+SET city = 'Bonita Springs'
+WHERE city = 'Bonita Spgs';
+
+UPDATE event
+SET event_location_addr = '11120 Carissa Commerce Ct'
+WHERE event_location_addr = '11120 Carissa Ct';
+
+
+
+SELECT DISTINCT event_location_name, event_location_addr, city
+FROM event
+ORDER BY event_location_name;
+
+
+
+
+--part 1.2
+
+-- Easterseals
+UPDATE event
+SET event_name = 'Meals That Matter - Easterseals January 2024',
+    event_location_name = 'Easterseals Southwest Florida',
+    event_location_addr = '350 Corbett St',
+    city = 'Fort Myers',
+    county = 'Lee',
+    zip_code = '33901',
+    individuals_served = 37,
+    notes = 'Strong turnout from returning participants.'
+WHERE event_name = 'Meals That Matter - Easterseals January'
+  AND event_date = '2024-01-10';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Easterseals August 2024',
+    event_location_name = 'Easterseals Southwest Florida',
+    individuals_served = 42,
+    notes = 'Meal distribution ran smoothly with regular volunteer support.'
+WHERE event_name = 'Meals That Matter - Easterseals August'
+  AND event_date = '2024-08-14';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Easterseals May 2025',
+    event_location_name = 'Easterseals Southwest Florida',
+    individuals_served = 39,
+    notes = 'Attendance was steady and participants responded positively.'
+WHERE event_name = 'Meals That Matter - Easterseals May'
+  AND event_date = '2025-05-07';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Easterseals December 2025',
+    event_location_name = 'Easterseals Southwest Florida',
+    individuals_served = 44,
+    notes = 'Holiday season increased attendance slightly.'
+WHERE event_name = 'Meals That Matter - Easterseals December'
+  AND event_date = '2025-12-03';
+
+
+-- Community Resource Network
+UPDATE event
+SET event_name = 'Meals That Matter - Community Resource Network February 2024',
+    event_location_name = 'Community Resource Network',
+    individuals_served = 53,
+    notes = 'Several repeat participants attended this month.'
+WHERE event_name = 'Meals That Matter - CRN February'
+  AND event_date = '2024-02-07';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Community Resource Network September 2024',
+    event_location_name = 'Community Resource Network',
+    individuals_served = 59,
+    notes = 'Distribution was well organized and participant flow was steady.'
+WHERE event_name = 'Meals That Matter - CRN September'
+  AND event_date = '2024-09-04';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Community Resource Network May 2025',
+    event_location_name = 'Community Resource Network',
+    individuals_served = 56,
+    notes = 'Attendance remained consistent with prior spring events.'
+WHERE event_name = 'Meals That Matter - CRN May'
+  AND event_date = '2025-05-14';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Community Resource Network Holiday 2025',
+    event_location_name = 'Community Resource Network',
+    individuals_served = 60,
+    notes = 'Holiday timing increased demand and community participation.'
+WHERE event_name = 'Meals That Matter - CRN Holiday'
+  AND event_date = '2025-12-10';
+
+
+-- Trailways Camps
+UPDATE event
+SET event_name = 'Meals That Matter - Trailways Winter Camp 2024',
+    event_location_name = 'Trailways Camps',
+    individuals_served = 27,
+    notes = 'Camp lunch supported the winter activity schedule well.'
+WHERE event_name = 'Meals That Matter - Trailways Winter Camp'
+  AND event_date = '2024-01-24';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Trailways Fall Camp 2024',
+    event_location_name = 'Trailways Camps',
+    individuals_served = 31,
+    notes = 'Participation increased during the fall camp session.'
+WHERE event_name = 'Meals That Matter - Trailways Fall Camp'
+  AND event_date = '2024-10-30';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Trailways Summer Camp 2025',
+    event_location_name = 'Trailways Camps',
+    individuals_served = 29,
+    notes = 'Lunch service fit well with the summer camp schedule.'
+WHERE event_name = 'Meals That Matter - Trailways Summer'
+  AND event_date = '2025-06-11';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Trailways Holiday Camp 2025',
+    event_location_name = 'Trailways Camps',
+    individuals_served = 33,
+    notes = 'Holiday camp attendance was slightly above average.'
+WHERE event_name = 'Meals That Matter - Trailways Holiday Camp'
+  AND event_date = '2025-12-19';
+
+
+-- Sunshine Adult Day Center
+UPDATE event
+SET event_name = 'Meals That Matter - Sunshine February 2024',
+    event_location_name = 'Sunshine Adult Day Center',
+    individuals_served = 29,
+    notes = 'Smaller but steady lunch event with regular participants.'
+WHERE event_name = 'Meals That Matter - Sunshine Feb'
+  AND event_date = '2024-02-14';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Sunshine October 2024',
+    event_location_name = 'Sunshine Adult Day Center',
+    individuals_served = 34,
+    notes = 'Attendance was slightly higher than expected.'
+WHERE event_name = 'Meals That Matter - Sunshine October'
+  AND event_date = '2024-10-09';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Sunshine June 2025',
+    event_location_name = 'Sunshine Adult Day Center',
+    individuals_served = 31,
+    notes = 'Participants appreciated the consistency of the meal program.'
+WHERE event_name = 'Meals That Matter - Sunshine June'
+  AND event_date = '2025-06-18';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Sunshine January 2026',
+    event_location_name = 'Sunshine Adult Day Center',
+    individuals_served = 35,
+    notes = 'New year event had strong attendance from returning participants.'
+WHERE event_name = 'Meals That Matter - Sunshine January 2026'
+  AND event_date = '2026-01-14';
+
+
+-- Hope Harbor Shelter
+UPDATE event
+SET event_name = 'Meals That Matter - Hope Harbor March 2024',
+    event_location_name = 'Hope Harbor Shelter',
+    individuals_served = 58,
+    notes = 'Residents responded positively to the meal quality.'
+WHERE event_name = 'Meals That Matter - Hope Harbor March'
+  AND event_date = '2024-03-06';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Hope Harbor Thanksgiving 2024',
+    event_location_name = 'Hope Harbor Shelter',
+    individuals_served = 74,
+    notes = 'Holiday meal demand was noticeably higher than a typical lunch.'
+WHERE event_name = 'Meals That Matter - Hope Harbor Thanksgiving'
+  AND event_date = '2024-11-27';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Hope Harbor July 2025',
+    event_location_name = 'Hope Harbor Shelter',
+    individuals_served = 66,
+    notes = 'Shelter participation remained strong during summer.'
+WHERE event_name = 'Meals That Matter - Hope Harbor July'
+  AND event_date = '2025-07-02';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Hope Harbor January 2026',
+    event_location_name = 'Hope Harbor Shelter',
+    individuals_served = 62,
+    notes = 'Attendance remained solid following the holiday season.'
+WHERE event_name = 'Meals That Matter - Hope Harbor January 2026'
+  AND event_date = '2026-01-21';
+
+
+-- Gulf Coast Abilities Center
+UPDATE event
+SET event_name = 'Meals That Matter - Gulf Coast Abilities Center March 2024',
+    event_location_name = 'Gulf Coast Abilities Center',
+    event_location_addr = '11120 Carissa Commerce Ct',
+    individuals_served = 46,
+    notes = 'Meal service ran smoothly with well-coordinated support.'
+WHERE event_name = 'Meals That Matter - GCAC March'
+  AND event_date = '2024-03-13';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Gulf Coast Abilities Center Thanksgiving 2024',
+    event_location_name = 'Gulf Coast Abilities Center',
+    event_location_addr = '11120 Carissa Commerce Ct',
+    individuals_served = 51,
+    notes = 'Holiday event produced higher participation than typical monthly service.'
+WHERE event_name = 'Meals That Matter - GCAC Thanksgiving'
+  AND event_date = '2024-11-27';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Gulf Coast Abilities Center July 2025',
+    event_location_name = 'Gulf Coast Abilities Center',
+    event_location_addr = '11120 Carissa Commerce Ct',
+    individuals_served = 41,
+    notes = 'Attendance dipped slightly but participant feedback was positive.'
+WHERE event_name = 'Meals That Matter - GCAC July'
+  AND event_date = '2025-07-09';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Gulf Coast Abilities Center February 2026',
+    event_location_name = 'Gulf Coast Abilities Center',
+    event_location_addr = '11120 Carissa Commerce Ct',
+    individuals_served = 47,
+    notes = 'February event had good turnout and efficient distribution.'
+WHERE event_name = 'Meals That Matter - GCAC February 2026'
+  AND event_date = '2026-02-04';
+
+
+-- Ability Works Florida
+UPDATE event
+SET event_name = 'Meals That Matter - Ability Works Florida April 2024',
+    event_location_name = 'Ability Works Florida',
+    city = 'Bonita Springs',
+    individuals_served = 47,
+    notes = 'Participants noted appreciation for the meal variety.'
+WHERE event_name = 'Meals That Matter - Ability Works April'
+  AND event_date = '2024-04-03';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Ability Works Florida December 2024',
+    event_location_name = 'Ability Works Florida',
+    city = 'Bonita Springs',
+    individuals_served = 52,
+    notes = 'End-of-year event maintained strong attendance.'
+WHERE event_name = 'Meals That Matter - Ability Works December'
+  AND event_date = '2024-12-04';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Ability Works Florida August 2025',
+    event_location_name = 'Ability Works Florida',
+    city = 'Bonita Springs',
+    individuals_served = 49,
+    notes = 'Attendance remained consistent with prior summer events.'
+WHERE event_name = 'Meals That Matter - Ability Works August'
+  AND event_date = '2025-08-06';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Ability Works Florida February 2026',
+    event_location_name = 'Ability Works Florida',
+    city = 'Bonita Springs',
+    individuals_served = 54,
+    notes = 'Participation increased modestly at this winter event.'
+WHERE event_name = 'Meals That Matter - Ability Works Feb 2026'
+  AND event_date = '2026-02-11';
+
+
+--part 1.3
+UPDATE event
+SET event_location_name = 'LARC Inc.'
+WHERE event_location_name = 'LARC Inc.';
+
+UPDATE event
+SET event_location_name = 'David Lawrence Centers'
+WHERE event_location_name = 'David Lawrence Centers';
+
+UPDATE event
+SET event_location_name = 'Senior Friendship Centers'
+WHERE event_location_name = 'Senior Friendship Ctrs';
+
+UPDATE event
+SET event_location_name = 'St. Matthew House'
+WHERE event_location_name = 'St. Matthew House';
+
+UPDATE event
+SET event_location_name = 'New Horizons of SWFL'
+WHERE event_location_name = 'New Horizons SWFL';
+
+UPDATE event
+SET event_location_name = 'United Cerebral Palsy of SWFL'
+WHERE event_location_name = 'UCP of SWFL';
+
+UPDATE event
+SET event_location_name = 'Lighthouse of SWFL'
+WHERE event_location_name = 'Lighthouse of SWFL';
+
+UPDATE event
+SET event_location_name = 'Boys & Girls Club of Collier County'
+WHERE event_location_name = 'Boys & Girls Club';
+
+
+
+--part 1.4
+-- LARC
+UPDATE event
+SET event_name = 'Meals That Matter - LARC Inc. June 2024',
+    event_location_name = 'LARC Inc.',
+    individuals_served = 39,
+    notes = 'Consistent participation from returning attendees.'
+WHERE event_name = 'Meals That Matter - LARC June 2024'
+  AND event_date = '2024-06-26';
+
+UPDATE event
+SET event_name = 'Meals That Matter - LARC Inc. October 2025',
+    event_location_name = 'LARC Inc.',
+    individuals_served = 35,
+    notes = 'Attendance was slightly lower than late summer events.'
+WHERE event_name = 'Meals That Matter - LARC Oct 2025'
+  AND event_date = '2025-10-22';
+
+
+-- David Lawrence Centers
+UPDATE event
+SET event_name = 'Meals That Matter - David Lawrence Centers October 2024',
+    event_location_name = 'David Lawrence Centers',
+    individuals_served = 29,
+    notes = 'Breakfast attendance increased due to strong weekday turnout.'
+WHERE event_name = 'Meals That Matter - DLC Oct 2024'
+  AND event_date = '2024-10-16';
+
+UPDATE event
+SET event_name = 'Meals That Matter - David Lawrence Centers January 2026',
+    event_location_name = 'David Lawrence Centers',
+    individuals_served = 23,
+    notes = 'Smaller breakfast event with steady participation.'
+WHERE event_name = 'Meals That Matter - DLC Jan 2026'
+  AND event_date = '2026-01-28';
+
+
+-- Senior Friendship Centers
+UPDATE event
+SET event_name = 'Meals That Matter - Senior Friendship Centers October 2024',
+    event_location_name = 'Senior Friendship Centers',
+    individuals_served = 61,
+    notes = 'Senior attendance remained steady this month.'
+WHERE event_name = 'Meals That Matter - Senior Friends Oct 2024'
+  AND event_date = '2024-10-23';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Senior Friendship Centers December 2025',
+    event_location_name = 'Senior Friendship Centers',
+    individuals_served = 68,
+    notes = 'Year-end event had stronger than usual turnout.'
+WHERE event_name = 'Meals That Matter - Senior Friends Dec 2025'
+  AND event_date = '2025-12-10';
+
+
+-- St. Matthew House
+UPDATE event
+SET event_name = 'Meals That Matter - St. Matthew House August 2024',
+    event_location_name = 'St. Matthew House',
+    individuals_served = 81,
+    notes = 'Large turnout and smooth distribution process.'
+WHERE event_name = 'Meals That Matter - St Matthew Aug 2024'
+  AND event_date = '2024-08-14';
+
+UPDATE event
+SET event_name = 'Meals That Matter - St. Matthew House April 2025',
+    event_location_name = 'St. Matthew House',
+    individuals_served = 74,
+    notes = 'Attendance was a little lower than holiday-season events.'
+WHERE event_name = 'Meals That Matter - St Matthew April 2025'
+  AND event_date = '2025-04-23';
+
+
+-- New Horizons of SWFL
+UPDATE event
+SET event_name = 'Meals That Matter - New Horizons of SWFL October 2024',
+    event_location_name = 'New Horizons of SWFL',
+    individuals_served = 24,
+    notes = 'Attendance was slightly above the usual range for this site.'
+WHERE event_name = 'Meals That Matter - New Horizons Oct 2024'
+  AND event_date = '2024-10-09';
+
+UPDATE event
+SET event_name = 'Meals That Matter - New Horizons of SWFL February 2026',
+    event_location_name = 'New Horizons of SWFL',
+    individuals_served = 18,
+    notes = 'Smaller winter event with regular participants.'
+WHERE event_name = 'Meals That Matter - New Horizons Feb 2026'
+  AND event_date = '2026-02-04';
+
+
+-- United Cerebral Palsy of SWFL
+UPDATE event
+SET event_name = 'Meals That Matter - United Cerebral Palsy of SWFL September 2024',
+    event_location_name = 'United Cerebral Palsy of SWFL',
+    individuals_served = 36,
+    notes = 'Attendance was stronger than average for a regular lunch event.'
+WHERE event_name = 'Meals That Matter - UCP Sept 2024'
+  AND event_date = '2024-09-11';
+
+UPDATE event
+SET event_name = 'Meals That Matter - United Cerebral Palsy of SWFL January 2026',
+    event_location_name = 'United Cerebral Palsy of SWFL',
+    individuals_served = 30,
+    notes = 'Winter event had moderate participation.'
+WHERE event_name = 'Meals That Matter - UCP Jan 2026'
+  AND event_date = '2026-01-07';
+
+
+-- Lighthouse of SWFL
+UPDATE event
+SET event_name = 'Meals That Matter - Lighthouse of SWFL December 2024',
+    event_location_name = 'Lighthouse of SWFL',
+    individuals_served = 24,
+    notes = 'Holiday-season turnout was slightly higher than normal.'
+WHERE event_name = 'Meals That Matter - Lighthouse Dec 2024'
+  AND event_date = '2024-12-18';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Lighthouse of SWFL January 2026',
+    event_location_name = 'Lighthouse of SWFL',
+    individuals_served = 18,
+    notes = 'Smaller group, but strong engagement from attendees.'
+WHERE event_name = 'Meals That Matter - Lighthouse Jan 2026'
+  AND event_date = '2026-01-14';
+
+
+-- Boys & Girls Club of Collier County
+UPDATE event
+SET event_name = 'Meals That Matter - Boys & Girls Club of Collier County July 2024',
+    event_location_name = 'Boys & Girls Club of Collier County',
+    individuals_served = 50,
+    notes = 'Summer camp participation was higher than expected.'
+WHERE event_name = 'Meals That Matter - BGC July 2024'
+  AND event_date = '2024-07-24';
+
+UPDATE event
+SET event_name = 'Meals That Matter - Boys & Girls Club of Collier County February 2025',
+    event_location_name = 'Boys & Girls Club of Collier County',
+    individuals_served = 44,
+    notes = 'Camp lunch attendance remained steady.'
+WHERE event_name = 'Meals That Matter - BGC February 2025'
+  AND event_date = '2025-02-26';
+
+  
+
+-- Add new column
+ALTER TABLE participant_survey
+ADD COLUMN who VARCHAR(50);
+
+-- Make disability_type_id required
+ALTER TABLE participant_survey
+ALTER COLUMN disability_type_id SET NOT NULL;
+
+UPDATE participant_survey
+SET visit_frequency = 'Rarely'
+WHERE visit_frequency = 'Quarterly';
+
+
+UPDATE participant_survey
+SET visit_frequency = 'Weekly'
+WHERE response_id % 7 = 0;
+
+SELECT DISTINCT visit_frequency
+FROM participant_survey
+ORDER BY visit_frequency;
+
+UPDATE participant_survey
+SET visit_frequency = 'Weekly'
+WHERE response_id % 9 = 0;
+
+UPDATE participant_survey
+SET visit_frequency = 'Rarely'
+WHERE response_id % 5 = 0; 
+
+UPDATE participant_survey
+SET who = 'Participant'
+WHERE who IS NULL AND response_id % 3 = 0;
+
+UPDATE participant_survey
+SET who = 'Caregiver'
+WHERE who IS NULL AND response_id % 3 = 1;
+
+UPDATE participant_survey
+SET who = 'Household Member'
+WHERE who IS NULL AND response_id % 3 = 2;
+
+UPDATE participant_survey
+SET disability_type_id = 1
+WHERE disability_type_id IS NULL;
+
+ALTER TABLE participant_survey
+ALTER COLUMN disability_type_id SET NOT NULL;
+
+
+UPDATE participant_survey
+SET program_satisfaction = 4
+WHERE program_satisfaction = 5
+  AND response_id % 4 = 0;
+
+ UPDATE participant_survey
+SET program_satisfaction = 3
+WHERE program_satisfaction = 5
+  AND response_id % 15 = 0;
+
+UPDATE participant_survey
+SET program_satisfaction = 4
+WHERE program_satisfaction IS NULL;
+
+UPDATE participant_survey
+SET household_size = 2
+WHERE household_size = 1
+  AND response_id % 5 = 0;
+
+UPDATE participant_survey
+SET household_size = 3
+WHERE household_size = 2
+  AND response_id % 6 = 0;  
+
+UPDATE participant_survey
+SET household_size = 4
+WHERE household_size = 3
+  AND response_id % 10 = 0;
+
+UPDATE participant_survey
+SET household_size = 2
+WHERE household_size IS NULL;
+
+UPDATE participant_survey
+SET household_size = 1
+WHERE who = 'Participant'
+  AND household_size > 3
+  AND response_id % 2 = 0;
+
+ UPDATE participant_survey
+SET household_size = 3
+WHERE who = 'Caregiver'
+  AND household_size = 1;
+
+UPDATE participant_survey
+SET household_size = 4
+WHERE who = 'Household Member'
+  AND household_size = 1
+  AND response_id % 3 = 0;
+
+
+UPDATE participant_survey
+SET program_satisfaction = 4
+WHERE program_satisfaction = 5
+  AND response_id % 6 = 0;
+
+
+
+UPDATE staff_volunteer_survey
+SET communication_rating = 4
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND staff_response_id % 4 = 0;
+
+
+UPDATE staff_volunteer_survey
+SET supplies_ready_rating = 4
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND staff_response_id % 6 = 0;
+
+
+ UPDATE staff_volunteer_survey
+SET overall_experience_rating = 4
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND staff_response_id % 7 = 0; 
+
+
+
+  UPDATE staff_volunteer_survey
+SET communication_rating = 5
+WHERE training_clarity_rating = 4
+  AND communication_rating = 4
+  AND supplies_ready_rating = 4
+  AND overall_experience_rating = 4
+  AND safety_rating = 4
+  AND staff_response_id % 3 = 0;
+
+  UPDATE staff_volunteer_survey
+SET safety_rating = 5
+WHERE training_clarity_rating = 4
+  AND communication_rating = 4
+  AND supplies_ready_rating = 4
+  AND overall_experience_rating = 4
+  AND safety_rating = 4
+  AND staff_response_id % 5 = 0;
+
+  
+UPDATE staff_volunteer_survey
+SET training_clarity_rating = 4
+WHERE role_type = 'Volunteer'
+  AND first_time = TRUE
+  AND training_clarity_rating = 5
+  AND staff_response_id % 2 = 0;
+
+ UPDATE staff_volunteer_survey
+SET communication_rating = 4
+WHERE role_type = 'Volunteer'
+  AND first_time = TRUE
+  AND communication_rating = 5
+  AND staff_response_id % 3 = 0;
+
+
+ 
+  UPDATE staff_volunteer_survey
+SET felt_supported = FALSE
+WHERE felt_supported = TRUE
+  AND first_time = TRUE
+  AND staff_response_id % 10 = 0;
+
+UPDATE staff_volunteer_survey
+SET would_volunteer_again = FALSE
+WHERE would_volunteer_again = TRUE
+  AND role_type = 'Volunteer'
+  AND first_time = TRUE
+  AND staff_response_id % 14 = 0;
+
+
+  UPDATE staff_volunteer_survey
+SET team_area = 'Cleanup'
+WHERE role_type = 'Volunteer'
+  AND team_area = 'Packing'
+  AND staff_response_id % 11 = 0;
+
+UPDATE staff_volunteer_survey
+SET team_area = 'Traffic'
+WHERE role_type = 'Staff'
+  AND team_area = 'Setup'
+  AND staff_response_id % 9 = 0;
+
+
+
+  UPDATE staff_volunteer_survey
+SET team_area = 'Other'
+WHERE team_area = 'Cleanup'
+  AND staff_response_id % 13 = 0;
+
+ SELECT training_clarity_rating,
+       communication_rating,
+       supplies_ready_rating,
+       overall_experience_rating,
+       safety_rating,
+       COUNT(*) AS total
+FROM staff_volunteer_survey
+GROUP BY training_clarity_rating,
+         communication_rating,
+         supplies_ready_rating,
+         overall_experience_rating,
+         safety_rating
+ORDER BY total DESC
+LIMIT 10;
+
+
+
+SELECT would_volunteer_again, COUNT(*) AS total
+FROM staff_volunteer_survey
+GROUP BY would_volunteer_again;
+
+SELECT would_volunteer_again, COUNT(*) AS total
+FROM staff_volunteer_survey
+GROUP BY would_volunteer_again;
+
+SELECT role_type, first_time, COUNT(*) AS total
+FROM staff_volunteer_survey
+GROUP BY role_type, first_time
+ORDER BY role_type, first_time;
+
+SELECT team_area, COUNT(*) AS total
+FROM staff_volunteer_survey
+GROUP BY team_area
+ORDER BY total DESC;
+
+
+
+UPDATE staff_volunteer_survey
+SET communication_rating = 4
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND staff_response_id % 4 = 0;
+
+UPDATE staff_volunteer_survey
+SET overall_experience_rating = 4
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND staff_response_id % 7 = 0;
+
+UPDATE staff_volunteer_survey
+SET communication_rating = 5
+WHERE training_clarity_rating = 4
+  AND communication_rating = 4
+  AND supplies_ready_rating = 4
+  AND overall_experience_rating = 4
+  AND safety_rating = 4
+  AND staff_response_id % 3 = 0;
+
+UPDATE staff_volunteer_survey
+SET training_clarity_rating = 4
+WHERE role_type = 'Volunteer'
+  AND first_time = TRUE
+  AND training_clarity_rating = 5
+  AND staff_response_id % 2 = 0;
+
+UPDATE staff_volunteer_survey
+SET felt_supported = FALSE
+WHERE felt_supported = TRUE
+  AND first_time = TRUE
+  AND staff_response_id % 10 = 0;
+
+
+
+UPDATE staff_volunteer_survey
+SET communication_rating = 3
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND role_type = 'Volunteer'
+  AND first_time = TRUE
+  AND staff_response_id % 12 = 0;
+
+  UPDATE staff_volunteer_survey
+SET supplies_ready_rating = 3
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND staff_response_id % 15 = 0;
+UPDATE staff_volunteer_survey
+SET overall_experience_rating = 3
+WHERE training_clarity_rating = 5
+  AND communication_rating = 5
+  AND supplies_ready_rating = 5
+  AND overall_experience_rating = 5
+  AND safety_rating = 5
+  AND staff_response_id % 18 = 0;
+
+  UPDATE staff_volunteer_survey
+SET training_clarity_rating = 3
+WHERE training_clarity_rating = 4
+  AND communication_rating = 4
+  AND supplies_ready_rating = 4
+  AND overall_experience_rating = 4
+  AND safety_rating = 4
+  AND first_time = TRUE
+  AND staff_response_id % 10 = 0;
+
+  UPDATE staff_volunteer_survey
+SET safety_rating = 3
+WHERE training_clarity_rating = 4
+  AND communication_rating = 4
+  AND supplies_ready_rating = 4
+  AND overall_experience_rating = 4
+  AND safety_rating = 4
+  AND staff_response_id % 14 = 0;
+
+
+
+commit;
+
+
+
+ SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'event';
+ 
+
+UPDATE participant_survey
+SET would_participate_again = FALSE
+WHERE visit_frequency = 'First time'
+  AND would_participate_again = TRUE
+  AND response_id % 4 = 0;
+
+ UPDATE participant_survey
+SET would_participate_again = FALSE
+WHERE visit_frequency = 'Rarely'
+  AND would_participate_again = TRUE
+  AND response_id % 7 = 0;
+
+  UPDATE participant_survey
+SET would_participate_again = FALSE
+WHERE visit_frequency = 'Monthly'
+  AND would_participate_again = TRUE
+  AND response_id % 12 = 0;
+
+  UPDATE participant_survey
+SET would_participate_again = FALSE
+WHERE visit_frequency = 'Weekly'
+  AND would_participate_again = TRUE
+  AND response_id % 10 = 0;
+
+  
+SELECT
+    ps.visit_frequency,
+    COUNT(ps.response_id) AS total_participants,
+    SUM(CASE 
+        WHEN ps.would_participate_again = TRUE THEN 1 
+        ELSE 0 
+    END) AS return_count,
+    ROUND(
+        100.0 * SUM(CASE 
+            WHEN ps.would_participate_again = TRUE THEN 1 
+            ELSE 0 
+        END) / COUNT(ps.response_id),
+        2
+    ) AS return_rate_percentage,
+    ROUND(AVG(ps.program_satisfaction), 2) AS avg_satisfaction,
+    ROUND(AVG(ps.event_met_needs), 2) AS avg_needs_met
+FROM participant_survey ps
+GROUP BY ps.visit_frequency
+ORDER BY return_rate_percentage DESC;
+
+
+UPDATE participant_survey
+SET would_participate_again = FALSE
+WHERE response_id IN (
+    SELECT response_id
+    FROM participant_survey
+    WHERE visit_frequency = 'Weekly'
+      AND would_participate_again = TRUE
+    ORDER BY response_id
+    LIMIT 2
+);
+
+
+UPDATE participant_survey
+SET would_participate_again = TRUE
+WHERE response_id IN (
+    SELECT response_id
+    FROM participant_survey
+    WHERE visit_frequency = 'First time'
+      AND would_participate_again = FALSE
+    ORDER BY response_id
+    LIMIT 1
+);
+
+
+SELECT visit_frequency, would_participate_again, COUNT(*) AS total
+FROM participant_survey
+GROUP BY visit_frequency, would_participate_again
+ORDER BY visit_frequency, would_participate_again;
+
+*/
+
+
+/*--------------------------------(NEW #6)---------------------------------------------------[ADD LINE]-------*
+
+
+SELECT
+    ps.visit_frequency,
+
+    COUNT(ps.response_id) AS total_participants,
+
+    SUM(CASE 
+        WHEN ps.would_participate_again = TRUE THEN 1 
+        ELSE 0 
+    END) AS return_count,
+
+    ROUND(
+        100.0 * SUM(CASE 
+            WHEN ps.would_participate_again = TRUE THEN 1 
+            ELSE 0 
+        END) / COUNT(ps.response_id),
+        2
+    ) AS return_rate_percentage,
+
+    ROUND(
+        100.0 * SUM(CASE 
+            WHEN ps.would_participate_again = FALSE THEN 1 
+            ELSE 0 
+        END) / COUNT(ps.response_id),
+        2
+    ) AS dropoff_rate_percentage,
+
+    ROUND(AVG(ps.program_satisfaction), 2) AS avg_satisfaction,
+    ROUND(AVG(ps.event_met_needs), 2) AS avg_needs_met
+
+FROM participant_survey ps
+
+GROUP BY ps.visit_frequency
+
+ORDER BY return_rate_percentage DESC;
+
+*----------------------------------------------------(End- New Task 6)------------------------------------*/
+
+
+
+
+
+/*----------------------------------------------------(Start- New Task 7)------------------------------------*/
+ 
+--location
+/*
+WITH ranked_groups AS (
+    SELECT
+        e.event_location_name,
+        dt.disability_name,
+        COUNT(ps.response_id) AS total_participants,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY e.event_location_name
+            ORDER BY COUNT(ps.response_id) DESC
+        ) AS rank
+
+    FROM participant_survey ps
+
+    JOIN event e
+        ON ps.event_id = e.event_id
+
+    LEFT JOIN disability_type dt
+        ON ps.disability_type_id = dt.disability_type_id
+
+    GROUP BY
+        e.event_location_name,
+        dt.disability_name
+)
+
+SELECT
+    event_location_name,
+    disability_name,
+    total_participants,
+    rank
+
+FROM ranked_groups
+
+WHERE rank <= 3
+
+ORDER BY event_location_name, rank;
+*/
+--------------------------------------------zip
+
+/*
+WITH ranked_groups AS (
+    SELECT
+        e.zip_code,
+        dt.disability_name,
+        COUNT(ps.response_id) AS total_participants,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY e.zip_code
+            ORDER BY COUNT(ps.response_id) DESC
+        ) AS rank
+
+    FROM participant_survey ps
+
+    JOIN event e
+        ON ps.event_id = e.event_id
+
+    LEFT JOIN disability_type dt
+        ON ps.disability_type_id = dt.disability_type_id
+
+    GROUP BY
+        e.zip_code,
+        dt.disability_name
+)
+
+SELECT
+    zip_code,
+    disability_name,
+    total_participants,
+    rank
+
+FROM ranked_groups
+
+WHERE rank <= 3
+
+ORDER BY zip_code, rank;
+*/
+
+/*----------------------------------------------------(End- New Task 7)------------------------------------*/
+
+
+
+
+
+/*CREATE VIEW participant_impact_view AS
+SELECT
+    ps.response_id,
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    dt.disability_name,
+    ps.visit_frequency,
+    ps.program_satisfaction,
+    ps.event_met_needs,
+    ps.felt_complete_meal,
+    ps.would_participate_again
+FROM participant_survey ps
+LEFT JOIN event e
+    ON ps.event_id = e.event_id
+LEFT JOIN disability_type dt
+    ON ps.disability_type_id = dt.disability_type_id;
+
+
+
+DROP VIEW participant_impact_view;
+*/
+
+
+
+
+
+/*----------------------------------------------------------(Start-Task 8)-------------------------------*/
 /*
 
----------------------------------------------------*/
+CREATE VIEW participant_experience_view AS
+SELECT
+    ps.response_id,
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    dt.disability_name,
+    ps.visit_frequency,
+    ps.program_satisfaction,
+    ps.event_met_needs,
+    ps.felt_complete_meal,
+    ps.would_participate_again
+FROM participant_survey ps
+LEFT JOIN event e
+    ON ps.event_id = e.event_id
+LEFT JOIN disability_type dt
+    ON ps.disability_type_id = dt.disability_type_id;
+*/
 
+/*
+
+SELECT * FROM participant_experience_view;
+*/
+/*-----------------------------------------------------------(End- New Task 8)------------------------------------*/
+
+
+
+/*-----------------------------------------------------------(New Task 9)------------------------------------*
+SELECT
+    e.event_location_name,
+    e.zip_code,
+
+    COUNT(ps.response_id) AS total_responses,
+
+    ROUND(AVG(ps.program_satisfaction), 2) AS avg_satisfaction,
+    ROUND(AVG(ps.event_met_needs), 2) AS avg_needs_met,
+
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN ps.felt_complete_meal = TRUE THEN 1
+            ELSE 0
+        END) / COUNT(ps.response_id),
+        2
+    ) AS meal_complete_percentage,
+
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN ps.would_participate_again = TRUE THEN 1
+            ELSE 0
+        END) / COUNT(ps.response_id),
+        2
+    ) AS return_interest_percentage
+
+FROM participant_survey ps
+JOIN event e
+    ON ps.event_id = e.event_id
+
+GROUP BY
+    e.event_location_name,
+    e.zip_code
+
+ORDER BY
+    avg_satisfaction DESC,
+    return_interest_percentage DESC;
+*-----------------------------------------------------------(New Task 9)------------------------------------*/
+
+
+
+/*-----------------------------------------------------------(New Task 10)------------------------------------*
+SELECT
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.event_location_name,
+
+    COUNT(svs.staff_response_id) AS total_staff_volunteer_responses,
+
+    ROUND(AVG(svs.training_clarity_rating), 2) AS avg_training_clarity,
+    ROUND(AVG(svs.communication_rating), 2) AS avg_communication,
+    ROUND(AVG(svs.supplies_ready_rating), 2) AS avg_supplies_ready,
+    ROUND(AVG(svs.safety_rating), 2) AS avg_safety,
+    ROUND(AVG(svs.overall_experience_rating), 2) AS avg_overall_experience,
+
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN svs.would_volunteer_again = TRUE THEN 1
+            ELSE 0
+        END) / COUNT(svs.staff_response_id),
+        2
+    ) AS return_rate_percentage,
+
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN svs.felt_supported = TRUE THEN 1
+            ELSE 0
+        END) / COUNT(svs.staff_response_id),
+        2
+    ) AS felt_supported_percentage
+
+FROM staff_volunteer_survey svs
+JOIN event e
+    ON svs.event_id = e.event_id
+
+GROUP BY
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.event_location_name
+
+ORDER BY
+    avg_overall_experience DESC,
+    return_rate_percentage DESC;
+
+
+*-----------------------------------------------------------(New Task 10)------------------------------------*/
+
+
+
+
+/*-----------------------------------------------------------(New Task 11)------------------------------------*/
+
+SELECT
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.event_location_name,
+
+    COUNT(svs.staff_response_id) AS total_responses,
+
+    ROUND(AVG(svs.training_clarity_rating), 2) AS avg_training_clarity,
+    ROUND(AVG(svs.communication_rating), 2) AS avg_communication,
+    ROUND(AVG(svs.supplies_ready_rating), 2) AS avg_supplies_ready,
+    ROUND(AVG(svs.safety_rating), 2) AS avg_safety,
+    ROUND(AVG(svs.overall_experience_rating), 2) AS avg_overall_experience,
+
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN svs.would_return = TRUE THEN 1
+            ELSE 0
+        END) / COUNT(svs.staff_response_id),
+        2
+    ) AS return_rate_percentage,
+
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN svs.felt_supported = TRUE THEN 1
+            ELSE 0
+        END) / COUNT(svs.staff_response_id),
+        2
+    ) AS felt_supported_percentage
+
+FROM staff_volunteer_surveys svs
+JOIN event e
+    ON svs.event_id = e.event_id
+
+GROUP BY
+    e.event_id,
+    e.event_name,
+    e.event_date,
+    e.event_location_name
+
+ORDER BY
+    avg_overall_experience DESC,
+    return_rate_percentage DESC;
+
+/*-----------------------------------------------------------(New Task 11)------------------------------------*/
+
+
+
+ 
+/*-----------------------------------------------------------(New Task 12)------------------------------------*
+
+
+SELECT
+    e.zip_code,
+
+    COUNT(DISTINCT e.event_id) AS total_events,
+
+    SUM(e.individuals_served) AS total_participants_served,
+
+    COUNT(ps.response_id) AS total_survey_responses,
+
+    ROUND(AVG(ps.program_satisfaction), 2) AS avg_satisfaction,
+    ROUND(AVG(ps.event_met_needs), 2) AS avg_needs_met,
+
+    ROUND(
+        100.0 * SUM(CASE
+            WHEN ps.would_participate_again = TRUE THEN 1
+            ELSE 0
+        END) / COUNT(ps.response_id),
+        2
+    ) AS return_rate_percentage
+
+FROM event e
+LEFT JOIN participant_survey ps
+    ON e.event_id = ps.event_id
+
+GROUP BY e.zip_code
+
+ORDER BY
+    total_participants_served DESC,
+    avg_satisfaction DESC;
+
+/*-----------------------------------------------------------(End Task 12)------------------------------------*/

@@ -90,7 +90,7 @@ CREATE TABLE participant_survey (
     visit_frequency         VARCHAR(50),
     -- How well did the event meet their needs (1-5)
     event_met_needs         INT CHECK (event_met_needs BETWEEN 1 AND 5),
-    -- Food preferences / dietary needs
+    -- Food preferences / dietary needs 
     has_diabetes            BOOLEAN DEFAULT FALSE,
     has_high_blood_pressure BOOLEAN DEFAULT FALSE,
     has_high_cholesterol    BOOLEAN DEFAULT FALSE,
@@ -103,7 +103,7 @@ CREATE TABLE participant_survey (
     is_veteran              BOOLEAN DEFAULT FALSE,
     is_grandparent_caregiver BOOLEAN DEFAULT FALSE,
     is_homeless             BOOLEAN DEFAULT FALSE,
-    -- Would the org participate again? (from CCAG post meals data excel sheet)
+    -- Would the org participate again? (from CCAG post meals data excel sheet)   
     would_participate_again BOOLEAN,
     positive_impact         TEXT,
     additional_feedback     TEXT,
