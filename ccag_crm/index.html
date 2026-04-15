@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCAG CRM - Meals That Matter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <span>CCAG CRM</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#dashboardPage" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#analyticsPage" class="nav-item" data-page="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#eventsPage" class="nav-item" data-page="events">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="#organizationsPage" class="nav-item" data-page="organizations">
+                    <i class="fas fa-building"></i>
+                    <span>Organizations</span>
+                </a>
+                <a href="#personnelPage" class="nav-item" data-page="personnel">
+                    <i class="fas fa-users"></i>
+                    <span>Personnel</span>
+                </a>
+                <a href="#reportsPage" class="nav-item" data-page="reports">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sync-status" id="syncStatus">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Last sync: --</span>
+                </div>
+                <button class="btn-sync" id="syncNowBtn">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Sync Now
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search events, organizations..." id="globalSearch">
+                </div>
+                <div class="header-actions">
+                    <div class="date-range">
+                        <input type="date" id="startDate" class="date-input">
+                        <span>to</span>
+                        <input type="date" id="endDate" class="date-input">
+                        <button class="btn-filter" id="applyFilterBtn">Apply</button>
+                    </div>
+                    <div class="user-menu">
+                        <img src="https://ui-avatars.com/api/?background=2E7D32&color=fff&name=Admin" alt="Admin">
+                        <span>Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page active">
+                <!-- Key Metrics -->
+                <div class="metrics-grid" id="metricsGrid">
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-calendar"></i></div>
+                        <div class="metric-info">
+                            <h3 id="totalEvents">--</h3>
+                            <p>Total Events</p>
+                        </div>
+                        <div class="metric-trend positive">
+                            <i class="fas fa-arrow-up"></i> 12%
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-users"></i></div>
+                        <div class="metric-info">
+                            <h3 id="totalServed">--</h3>
+                            <p>Individuals Served</p>
+                        </div>
+                        <div class="metric-trend positive">
+                            <i class="fas fa-arrow-up"></i> 8%
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-star"></i></div>
+                        <div class="metric-info">
+                            <h3 id="avgSatisfaction">--</h3>
+                            <p>Avg Satisfaction</p>
+                        </div>
+                        <div class="metric-trend positive">
+                            <i class="fas fa-arrow-up"></i> 5%
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon"><i class="fas fa-hand-sparkles"></i></div>
+                        <div class="metric-info">
+                            <h3 id="totalVolunteers">--</h3>
+                            <p>Active Volunteers</p>
+                        </div>
+                        <div class="metric-trend neutral">
+                            <i class="fas fa-minus"></i> 0%
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Satisfaction by Disability Group</h3>
+                            <button class="btn-icon" onclick="exportChart('satisfactionChart')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <canvas id="satisfactionChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Staffing Benchmarks</h3>
+                            <button class="btn-icon" onclick="exportChart('staffingChart')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <canvas id="staffingChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Organizations Table -->
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>Top Performing Organizations</h3>
+                        <button class="btn-icon" onclick="exportToExcel('topOrgsTable')">
+                            <i class="fas fa-file-excel"></i>
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="topOrgsTable">
+                            <thead>
+                                <tr><th>Organization</th><th>Events</th><th>Served</th><th>Avg Satisfaction</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="topOrgsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Events -->
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>Recent Events</h3>
+                        <button class="btn-primary-sm" onclick="showAddEventModal()">
+                            <i class="fas fa-plus"></i> Add Event
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="recentEventsTable">
+                            <thead>
+                                <tr><th>Event Name</th><th>Organization</th><th>Date</th><th>Type</th><th>Served</th><th>Satisfaction</th></tr>
+                            </thead>
+                            <tbody id="recentEventsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analyticsPage" class="page">
+                <div class="page-header">
+                    <h2>Analytics & Insights</h2>
+                    <div class="filter-group">
+                        <select id="analyticsType" class="filter-select">
+                            <option value="disability">By Disability Type</option>
+                            <option value="organization">By Organization</option>
+                            <option value="eventType">By Event Type</option>
+                            <option value="trend">Trend Analysis</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="analytics-container" id="analyticsContainer">
+                    <!-- Dynamic analytics content -->
+                </div>
+            </div>
+
+            <!-- Events Page -->
+            <div id="eventsPage" class="page">
+                <div class="page-header">
+                    <h2>Events Management</h2>
+                    <button class="btn-primary" onclick="showAddEventModal()">
+                        <i class="fas fa-plus"></i> Schedule New Event
+                    </button>
+                </div>
+                
+                <div class="filter-bar">
+                    <input type="text" placeholder="Search events..." id="eventsSearch" class="filter-input">
+                    <select id="eventTypeFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Thanksgiving Meal">Thanksgiving Meal</option>
+                        <option value="Camp Lunch">Camp Lunch</option>
+                    </select>
+                    <select id="orgFilter" class="filter-select"></select>
+                </div>
+                
+                <div class="events-grid" id="eventsGrid"></div>
+            </div>
+
+            <!-- Organizations Page -->
+            <div id="organizationsPage" class="page">
+                <div class="page-header">
+                    <h2>Partner Organizations</h2>
+                    <button class="btn-primary" onclick="showAddOrgModal()">
+                        <i class="fas fa-plus"></i> Add Organization
+                    </button>
+                </div>
+                <div class="orgs-grid" id="orgsGrid"></div>
+            </div>
+
+            <!-- Personnel Page -->
+            <div id="personnelPage" class="page">
+                <div class="page-header">
+                    <h2>Personnel Management</h2>
+                    <button class="btn-primary" onclick="showAddPersonnelModal()">
+                        <i class="fas fa-user-plus"></i> Add Personnel
+                    </button>
+                </div>
+                <div class="personnel-stats" id="personnelStats"></div>
+                <div class="personnel-list" id="personnelList"></div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reportsPage" class="page">
+                <div class="page-header">
+                    <h2>Generate Reports</h2>
+                </div>
+                <div class="report-options">
+                    <div class="report-card" onclick="generateReport('satisfaction')">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Satisfaction Report</h3>
+                        <p>Detailed satisfaction metrics by disability type</p>
+                    </div>
+                    <div class="report-card" onclick="generateReport('staffing')">
+                        <i class="fas fa-users"></i>
+                        <h3>Staffing Report</h3>
+                        <p>Staffing adequacy and volunteer analysis</p>
+                    </div>
+                    <div class="report-card" onclick="generateReport('events')">
+                        <i class="fas fa-calendar"></i>
+                        <h3>Event Summary</h3>
+                        <p>Complete event history and outcomes</p>
+                    </div>
+                    <div class="report-card" onclick="generateReport('impact')">
+                        <i class="fas fa-heart"></i>
+                        <h3>Impact Report</h3>
+                        <p>Program impact and community needs assessment</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Schedule New Event</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="eventForm">
+                <div class="form-group"><label>Event Name</label><input type="text" id="eventName" required></div>
+                <div class="form-group"><label>Organization</label><select id="eventOrg" required></select></div>
+                <div class="form-group"><label>Event Type</label><select id="eventType"><option>Lunch</option><option>Breakfast</option><option>Thanksgiving Meal</option><option>Camp Lunch</option></select></div>
+                <div class="form-group"><label>Event Date</label><input type="date" id="eventDate" required></div>
+                <div class="form-group"><label>Individuals Served</label><input type="number" id="individualsServed" required></div>
+                <div class="form-group"><label>Notes</label><textarea id="eventNotes" rows="3"></textarea></div>
+                <div class="form-actions"><button type="submit" class="btn-primary">Save Event</button><button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading data from Google Sheets...</p>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/googleSheets.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
