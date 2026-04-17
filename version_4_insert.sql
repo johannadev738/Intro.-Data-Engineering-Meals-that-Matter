@@ -145,7 +145,7 @@ INSERT INTO Event_Personnel (event_id, person_id, role) VALUES
 -- ============================================================
 -- SURVEYS
 -- ============================================================
-INSERT INTO Survey (survey_id, event_id, survey_type) VALUES
+INSERT INTO Survey (survey_id, event_id, survey_target_type) VALUES
 (1, 1, 'participant'),
 (2, 1, 'staff'),
 (3, 2, 'participant'),

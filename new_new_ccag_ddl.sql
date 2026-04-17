@@ -57,7 +57,7 @@ CREATE TABLE Event (
     event_location_name VARCHAR(150),
     individuals_served INT CHECK (individuals_served > 0),
     notes TEXT,
-    FOREIGN KEY (org_id) REFERENCES Organization(org_id)
+    FOREIGN KEY (org_id) REFERENCES Organization(org_id),
     FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );
 
@@ -110,8 +110,8 @@ CREATE TABLE Disability_Type (
 CREATE TABLE Survey (
     survey_id INT PRIMARY KEY,
     event_id INT NOT NULL,
-    target_type VARCHAR(50) NOT NULL CHECK (
-        target_type IN ('participant', 'staff', 'volunteer')
+    survey_target_type VARCHAR(50) NOT NULL CHECK (
+        survey_target_type IN ('participant', 'staff', 'volunteer')
     ),
     FOREIGN KEY (event_id) REFERENCES Event(event_id)
 );

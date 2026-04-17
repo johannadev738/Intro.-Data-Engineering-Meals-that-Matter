@@ -421,3 +421,192 @@ SELECT *
 FROM participant_progress_view
 ORDER BY response_date, event_id, response_id;
 */
+
+-- ==================
+-- Task 9
+-- ==================
+/*
+CCAG administrators want to compare participant satisfaction, meal completeness,
+and return interest across event locations to determine which locations are the
+most effective for future Meals That Matter distributions.
+*/
+/*
+SELECT
+    e.event_location_name,
+    COUNT(DISTINCT sr.response_id) AS total_responses,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Program satisfaction%'
+        THEN CAST(a.answer_value AS DECIMAL)
+    END), 2) AS avg_satisfaction,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Event met needs%'
+        THEN CAST(a.answer_value AS DECIMAL)
+    END), 2) AS avg_needs_met,
+
+    ROUND(
+        100.0 * COUNT(CASE
+            WHEN q.question_text ILIKE '%meal was complete%'
+             AND a.answer_value = 'true' THEN 1
+        END)
+        / NULLIF(COUNT(DISTINCT sr.response_id), 0),
+    2) AS meal_complete_percentage
+
+FROM Survey s
+JOIN Survey_Response sr ON s.survey_id = sr.survey_id
+JOIN Event e ON s.event_id = e.event_id
+JOIN Answer a ON sr.response_id = a.response_id
+JOIN Question q ON a.question_id = q.question_id
+
+WHERE s.survey_target_type = 'participant'
+
+GROUP BY
+    e.event_location_name
+
+ORDER BY
+    avg_satisfaction DESC;
+
+*/
+
+
+-- ==================
+-- Task 10
+-- ==================
+/*
+CCAG administrators want to evaluate staff and volunteer experience by event
+in order to identify trends in training clarity, communication, supplies readiness,
+overall experience, and perceived support.
+*/
+/*
+SELECT
+    e.event_id,
+    e.event_name,
+    e.event_location_name,
+
+    COUNT(DISTINCT sr.response_id) AS total_staff_volunteer_responses,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Training clarity%'
+        THEN CAST(a.answer_value AS DECIMAL)
+    END), 2) AS avg_training_clarity,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Communication rating%'
+        THEN CAST(a.answer_value AS DECIMAL)
+    END), 2) AS avg_communication,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Supplies ready%'
+        THEN CAST(a.answer_value AS DECIMAL)
+    END), 2) AS avg_supplies_ready,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Overall experience%'
+        THEN CAST(a.answer_value AS DECIMAL)
+    END), 2) AS avg_overall_experience,
+
+    ROUND(
+        100.0 * COUNT(CASE
+            WHEN q.question_text ILIKE '%supported%'
+             AND a.answer_value = 'true' THEN 1
+        END)
+        / NULLIF(COUNT(DISTINCT sr.response_id), 0),
+    2) AS felt_supported_percentage
+
+FROM Survey s
+JOIN Survey_Response sr ON s.survey_id = sr.survey_id
+JOIN Event e ON s.event_id = e.event_id
+JOIN Answer a ON sr.response_id = a.response_id
+JOIN Question q ON a.question_id = q.question_id
+
+WHERE s.survey_target_type IN ('staff', 'volunteer')
+
+GROUP BY
+    e.event_id,
+    e.event_name,
+    e.event_location_name
+
+ORDER BY
+    avg_overall_experience DESC;
+
+*/
+
+
+-- ==================
+-- Task 11
+-- ==================
+/*
+CCAG administrators want to evaluate participation and satisfaction across zip codes
+to identify which geographic areas have the highest community reach and engagement.
+*/
+/*
+SELECT
+    a.zip_code,
+
+    COUNT(DISTINCT e.event_id) AS total_events,
+
+    SUM(e.individuals_served) AS total_participants_served,
+
+    COUNT(DISTINCT sr.response_id) AS total_survey_responses,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Program satisfaction%'
+        THEN CAST(ans.answer_value AS DECIMAL)
+    END), 2) AS avg_satisfaction,
+
+    ROUND(AVG(CASE
+        WHEN q.question_text ILIKE '%Event met needs%'
+        THEN CAST(ans.answer_value AS DECIMAL)
+    END), 2) AS avg_needs_met
+
+FROM Event e
+JOIN Address a ON e.address_id = a.address_id
+JOIN Survey s ON e.event_id = s.event_id
+JOIN Survey_Response sr ON s.survey_id = sr.survey_id
+JOIN Answer ans ON sr.response_id = ans.response_id
+JOIN Question q ON ans.question_id = q.question_id
+
+WHERE s.survey_target_type = 'participant'
+
+GROUP BY
+    a.zip_code
+
+ORDER BY
+    total_participants_served DESC,
+    avg_satisfaction DESC;
+
+*/
+
+-- ==================
+-- Task 12
+-- ==================
+/*
+CCAG administrators want to identify which event locations are performing above
+the overall average participation level in order to highlight high-impact locations
+and guide future resource allocation.
+*/
+/*
+SELECT
+    sub.event_location_name,
+    sub.zip_code,
+    ROUND( sub.avg_participants_served, 2) AS avg_participants_served
+FROM (
+--	this section below calculates average participants per location as 'sub'
+    SELECT
+        e.event_location_name,
+        a.zip_code,
+        AVG(e.individuals_served) AS avg_participants_served
+    FROM event e
+    LEFT JOIN Address a ON e.address_id = a.address_id
+    GROUP BY
+        e.event_location_name,
+        a.zip_code
+) sub
+WHERE sub.avg_participants_served > (
+    SELECT AVG(individuals_served)
+    FROM event
+)
+ORDER BY sub.avg_participants_served DESC;
+
+*/
