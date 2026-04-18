@@ -69,6 +69,15 @@ button:hover{
 background:#a94400;
 }
 
+.btn-secondary{
+margin-top:10px;
+background:#3a3a3a;
+}
+
+.btn-secondary:hover{
+background:#1f1f1f;
+}
+
 #message{
 margin-top:15px;
 text-align:center;
@@ -94,6 +103,7 @@ cursor:pointer;
 <h1>CCAG CRM</h1>
 <h2>Log In</h2>
 
+<form id="loginForm">
 <input
 type="email"
 id="email"
@@ -106,9 +116,14 @@ id="password"
 placeholder="Password"
 />
 
-<button onclick="login()">
+<button id="loginButton" type="submit">
 Login
 </button>
+
+<button id="signupButton" type="button" class="btn-secondary">
+Create Account
+</button>
+</form>
 
 <p id="message"></p>
 
@@ -116,12 +131,24 @@ Login
 
 <script>
 const supabaseApi = window.ccagSupabase;
+const messageEl = document.getElementById("message");
+const loginForm = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+const signupButton = document.getElementById("signupButton");
 
-if (!supabaseApi) {
-document.getElementById("message").innerHTML =
-"Supabase failed to initialize. Check js/supabase.js.";
+function setMessage(text, color) {
+messageEl.textContent = text;
+messageEl.style.color = color || "#b00020";
 }
 
+if (!supabaseApi) {
+setMessage("Supabase failed to initialize. Check internet and js/supabase.js.");
+if (loginButton) {
+loginButton.disabled = true;
+loginButton.style.opacity = "0.6";
+loginButton.style.cursor = "not-allowed";
+}
+} else {
 supabaseApi.getSession()
 .then((session) => {
 if (session) {
@@ -130,9 +157,17 @@ window.location.href = "index.html";
 })
 .catch((error) => {
 console.error("Session check failed:", error);
+setMessage("Could not verify session. Please try again.");
 });
+}
 
-async function login(){
+async function login(event){
+if (event) event.preventDefault();
+
+if (!supabaseApi) {
+setMessage("Login is unavailable until Supabase initializes.");
+return;
+}
 
 let email=
 document.getElementById("email").value;
@@ -140,7 +175,17 @@ document.getElementById("email").value;
 let password=
 document.getElementById("password").value;
 
+email = email.trim();
+
+if (!email || !password) {
+setMessage("Please enter both email and password.");
+return;
+}
+
 try {
+if (loginButton) loginButton.disabled = true;
+setMessage("Signing in...", "#CC5500");
+
 await supabaseApi.signInWithPassword(
 email,
 password
@@ -148,11 +193,63 @@ password
 
 window.location.href="index.html";
 } catch (error) {
-document.getElementById("message").innerHTML=
-error.message;
+setMessage(error.message || "Login failed. Please try again.");
+return;
+} finally {
+if (loginButton) loginButton.disabled = false;
+}
+}
+
+async function signUp(){
+if (!supabaseApi) {
+setMessage("Sign up is unavailable until Supabase initializes.");
 return;
 }
 
+let email=
+document.getElementById("email").value;
+
+let password=
+document.getElementById("password").value;
+
+email = email.trim();
+
+if (!email || !password) {
+setMessage("Enter email and password, then click Create Account.");
+return;
+}
+
+if (password.length < 6) {
+setMessage("Password must be at least 6 characters.");
+return;
+}
+
+try {
+if (signupButton) signupButton.disabled = true;
+setMessage("Creating account...", "#CC5500");
+
+await supabaseApi.signUp(
+email,
+password
+);
+
+setMessage(
+"Account created. If email confirmation is enabled, verify email then log in.",
+"#1f7a1f"
+);
+} catch (error) {
+setMessage(error.message || "Could not create account. Please try again.");
+} finally {
+if (signupButton) signupButton.disabled = false;
+}
+}
+
+if (loginForm) {
+loginForm.addEventListener("submit", login);
+}
+
+if (signupButton) {
+signupButton.addEventListener("click", signUp);
 }
 </script>
 

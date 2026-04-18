@@ -855,8 +855,20 @@ window.generateReport = function(type) {
     alert(`Generating ${type} report...`);
 };
 
-window.logout = function() {
-    window.location.href = 'login.html';
+window.logout = async function() {
+    const supabaseApi = window.ccagSupabase;
+
+    try {
+        if (supabaseApi?.signOut) {
+            await supabaseApi.signOut();
+        } else {
+            localStorage.removeItem('user');
+        }
+    } catch (error) {
+        console.error('Logout failed:', error);
+    } finally {
+        window.location.href = 'login.html';
+    }
 };
 
 window.showAddEventModal = function() {
