@@ -43,6 +43,10 @@
                     <i class="fas fa-file-alt"></i>
                     <span>Reports</span>
                 </a>
+                <a href="#adminPage" class="nav-item" data-page="admin">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </a>
             </nav>
             <div class="sidebar-footer">
                 <div class="sync-status" id="syncStatus">
@@ -54,6 +58,9 @@
                     Sync Now
                 </button>
             </div>
+            <button onclick="logout()">
+                Logout
+            </button>
         </aside>
 
         <!-- Main Content -->
@@ -70,11 +77,6 @@
                         <span>to</span>
                         <input type="date" id="endDate" class="date-input">
                         <button class="btn-filter" id="applyFilterBtn">Apply</button>
-                    </div>
-                    <div class="user-menu">
-                        <img src="https://ui-avatars.com/api/?background=2E7D32&color=fff&name=Admin" alt="Admin">
-                        <span>Admin</span>
-                        <i class="fas fa-chevron-down"></i>
                     </div>
                 </div>
             </header>
@@ -176,7 +178,7 @@
                     <div class="table-responsive">
                         <table class="data-table" id="recentEventsTable">
                             <thead>
-                                <tr><th>Event Name</th><th>Organization</th><th>Date</th><th>Type</th><th>Served</th><th>Satisfaction</th></tr>
+                                <tr><th>Event Name</th><th>Organization</th><th>Date</th><th>Type</th><th>Satisfaction</th></tr>
                             </thead>
                             <tbody id="recentEventsBody"></tbody>
                         </table>
@@ -190,6 +192,7 @@
                     <h2>Analytics & Insights</h2>
                     <div class="filter-group">
                         <select id="analyticsType" class="filter-select">
+                            <option value="zipCode" selected>By Zip Code</option>
                             <option value="disability">By Disability Type</option>
                             <option value="organization">By Organization</option>
                             <option value="eventType">By Event Type</option>
@@ -279,6 +282,60 @@
                 </div>
             </div>
 
+            <!-- Admin Page -->
+            <div id="adminPage" class="page">
+                <div class="page-header">
+                    <h2>Admin User Management</h2>
+                </div>
+
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>Create or Update User Role</h3>
+                    </div>
+                    <div class="admin-form-grid">
+                        <div class="form-group">
+                            <label for="adminUserEmail">User Email</label>
+                            <input type="email" id="adminUserEmail" placeholder="user@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminUserRole">Role</label>
+                            <select id="adminUserRole" class="filter-select">
+                                <option value="admin">Admin</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="admin-actions-row">
+                        <button class="btn-primary" id="saveUserRoleBtn">
+                            <i class="fas fa-save"></i> Save Role
+                        </button>
+                    </div>
+                    <p id="adminMessage" class="admin-message"></p>
+                </div>
+
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>Existing User Roles</h3>
+                        <button class="btn-primary-sm" id="refreshAdminUsersBtn">
+                            <i class="fas fa-rotate"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="adminUsersTable">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Updated</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -301,14 +358,34 @@
         </div>
     </div>
 
+    <div id="personnelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Personnel</h3>
+                <span class="close" onclick="closePersonnelModal()">&times;</span>
+            </div>
+            <form id="personnelForm">
+                <div class="form-group"><label for="personnelName">Volunteer Name</label><input type="text" id="personnelName" required></div>
+                <div class="form-group"><label for="personnelEvent">Event Name</label><input type="text" id="personnelEvent" required></div>
+                <div class="form-group"><label for="personnelOrg">Organization Name</label><input type="text" id="personnelOrg" required></div>
+                <div class="form-group"><label for="personnelRole">Role</label><input type="text" id="personnelRole" required></div>
+                <div class="form-group"><label for="personnelHours">Hours Volunteered</label><input type="number" id="personnelHours" min="0" step="0.5" required></div>
+                <p id="personnelFormMessage" class="admin-message"></p>
+                <div class="form-actions"><button type="submit" class="btn-primary">Save Personnel</button><button type="button" class="btn-secondary" onclick="closePersonnelModal()">Cancel</button></div>
+            </form>
+        </div>
+    </div>
+
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="spinner"></div>
-        <p>Loading data from Google Sheets...</p>
+        <p>Loading data...</p>
     </div>
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/googleSheets.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/app.js"></script>
-</body>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- App -->
+<script defer src="js/utils.js"></script>
+<script defer src="js/charts.js"></script>
+<script defer src="js/supabase.js"></script>
+<script defer src="js/app.js"></script>
 </html>
