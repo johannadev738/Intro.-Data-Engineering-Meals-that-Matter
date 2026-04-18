@@ -18,6 +18,7 @@
                 <i class="fas fa-utensils"></i>
                 <span>CCAG CRM</span>
             </div>
+
             <nav class="nav-menu">
                 <a href="#dashboardPage" class="nav-item active" data-page="dashboard">
                     <i class="fas fa-tachometer-alt"></i>
@@ -48,6 +49,7 @@
                     <span>Admin</span>
                 </a>
             </nav>
+
             <div class="sidebar-footer">
                 <div class="sync-status" id="syncStatus">
                     <i class="fas fa-sync-alt"></i>
@@ -58,6 +60,7 @@
                     Sync Now
                 </button>
             </div>
+
             <button class="btn-logout" id="logoutBtn" onclick="logout()">
                 <i class="fas fa-right-from-bracket"></i>
                 Logout
@@ -70,7 +73,7 @@
             <header class="header">
                 <div class="header-search">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search events, organizations..." id="globalSearch">
+                    <input type="text" placeholder="Search events, organizations, ZIP, or survey details..." id="globalSearch">
                 </div>
                 <div class="header-actions">
                     <div class="date-range">
@@ -93,9 +96,10 @@
                             <p>Total Events</p>
                         </div>
                         <div class="metric-trend positive">
-                            <i class="fas fa-arrow-up"></i> 12%
+                            <i class="fas fa-arrow-up"></i> Live
                         </div>
                     </div>
+
                     <div class="metric-card">
                         <div class="metric-icon"><i class="fas fa-users"></i></div>
                         <div class="metric-info">
@@ -103,9 +107,10 @@
                             <p>Individuals Served</p>
                         </div>
                         <div class="metric-trend positive">
-                            <i class="fas fa-arrow-up"></i> 8%
+                            <i class="fas fa-arrow-up"></i> Live
                         </div>
                     </div>
+
                     <div class="metric-card">
                         <div class="metric-icon"><i class="fas fa-star"></i></div>
                         <div class="metric-info">
@@ -113,9 +118,10 @@
                             <p>Avg Satisfaction</p>
                         </div>
                         <div class="metric-trend positive">
-                            <i class="fas fa-arrow-up"></i> 5%
+                            <i class="fas fa-arrow-up"></i> Live
                         </div>
                     </div>
+
                     <div class="metric-card">
                         <div class="metric-icon"><i class="fas fa-hand-sparkles"></i></div>
                         <div class="metric-info">
@@ -123,7 +129,7 @@
                             <p>Active Volunteers</p>
                         </div>
                         <div class="metric-trend neutral">
-                            <i class="fas fa-minus"></i> 0%
+                            <i class="fas fa-minus"></i> Live
                         </div>
                     </div>
                 </div>
@@ -132,16 +138,17 @@
                 <div class="charts-row">
                     <div class="chart-card">
                         <div class="card-header">
-                            <h3>Satisfaction by Disability Group</h3>
+                            <h3>Participant Satisfaction Distribution</h3>
                             <button class="btn-icon" onclick="exportChart('satisfactionChart')">
                                 <i class="fas fa-download"></i>
                             </button>
                         </div>
                         <canvas id="satisfactionChart"></canvas>
                     </div>
+
                     <div class="chart-card">
                         <div class="card-header">
-                            <h3>Staffing Benchmarks</h3>
+                            <h3>Event Staffing Status</h3>
                             <button class="btn-icon" onclick="exportChart('staffingChart')">
                                 <i class="fas fa-download"></i>
                             </button>
@@ -161,7 +168,13 @@
                     <div class="table-responsive">
                         <table class="data-table" id="topOrgsTable">
                             <thead>
-                                <tr><th>Organization</th><th>Events</th><th>Served</th><th>Avg Satisfaction</th><th>Status</th></tr>
+                                <tr>
+                                    <th>Organization</th>
+                                    <th>Events</th>
+                                    <th>Served</th>
+                                    <th>Avg Satisfaction</th>
+                                    <th>Status</th>
+                                </tr>
                             </thead>
                             <tbody id="topOrgsBody"></tbody>
                         </table>
@@ -179,7 +192,13 @@
                     <div class="table-responsive">
                         <table class="data-table" id="recentEventsTable">
                             <thead>
-                                <tr><th>Event Name</th><th>Organization</th><th>Date</th><th>Type</th><th>Satisfaction</th></tr>
+                                <tr>
+                                    <th>Event Name</th>
+                                    <th>Organization</th>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Satisfaction</th>
+                                </tr>
                             </thead>
                             <tbody id="recentEventsBody"></tbody>
                         </table>
@@ -193,15 +212,14 @@
                     <h2>Analytics & Insights</h2>
                     <div class="filter-group">
                         <select id="analyticsType" class="filter-select">
-                            <option value="zipCode" selected>By Zip Code</option>
+                            <option value="zipCode" selected>By ZIP Code</option>
                             <option value="disability">By Disability Type</option>
                             <option value="organization">By Organization</option>
-                            <option value="eventType">By Event Type</option>
-                            <option value="trend">Trend Analysis</option>
+                            <option value="trend">Retention / Trend Analysis</option>
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="analytics-container" id="analyticsContainer">
                     <!-- Dynamic analytics content -->
                 </div>
@@ -215,9 +233,9 @@
                         <i class="fas fa-plus"></i> Schedule New Event
                     </button>
                 </div>
-                
+
                 <div class="filter-bar">
-                    <input type="text" placeholder="Search events..." id="eventsSearch" class="filter-input">
+                    <input type="text" placeholder="Search events, ZIP, type, or organization..." id="eventsSearch" class="filter-input">
                     <select id="eventTypeFilter" class="filter-select">
                         <option value="">All Types</option>
                         <option value="Lunch">Lunch</option>
@@ -227,7 +245,7 @@
                     </select>
                     <select id="orgFilter" class="filter-select"></select>
                 </div>
-                
+
                 <div class="events-grid" id="eventsGrid"></div>
             </div>
 
@@ -259,26 +277,30 @@
                 <div class="page-header">
                     <h2>Generate Reports</h2>
                 </div>
+
                 <div class="report-options">
                     <div class="report-card" onclick="generateReport('satisfaction')">
                         <i class="fas fa-chart-bar"></i>
                         <h3>Satisfaction Report</h3>
-                        <p>Detailed satisfaction metrics by disability type</p>
+                        <p>Organization-level participant satisfaction summary</p>
                     </div>
+
                     <div class="report-card" onclick="generateReport('staffing')">
                         <i class="fas fa-users"></i>
                         <h3>Staffing Report</h3>
-                        <p>Staffing adequacy and volunteer analysis</p>
+                        <p>Volunteer support and event staffing status</p>
                     </div>
+
                     <div class="report-card" onclick="generateReport('events')">
                         <i class="fas fa-calendar"></i>
                         <h3>Event Summary</h3>
-                        <p>Complete event history and outcomes</p>
+                        <p>Event-level participation, staffing, and satisfaction overview</p>
                     </div>
+
                     <div class="report-card" onclick="generateReport('impact')">
                         <i class="fas fa-heart"></i>
-                        <h3>Impact Report</h3>
-                        <p>Program impact and community needs assessment</p>
+                        <h3>Retention Report</h3>
+                        <p>Participant visit frequency and retention trends</p>
                     </div>
                 </div>
             </div>
@@ -293,6 +315,7 @@
                     <div class="card-header">
                         <h3>Create or Update User Role</h3>
                     </div>
+
                     <div class="admin-form-grid">
                         <div class="form-group">
                             <label for="adminUserEmail">User Email</label>
@@ -306,11 +329,13 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="admin-actions-row">
                         <button class="btn-primary" id="saveUserRoleBtn">
                             <i class="fas fa-save"></i> Save Role
                         </button>
                     </div>
+
                     <p id="adminMessage" class="admin-message"></p>
                 </div>
 
@@ -321,6 +346,7 @@
                             <i class="fas fa-rotate"></i> Refresh
                         </button>
                     </div>
+
                     <div class="table-responsive">
                         <table class="data-table" id="adminUsersTable">
                             <thead>
@@ -336,57 +362,118 @@
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 
-    <!-- Modals -->
+    <!-- Event Modal -->
     <div id="eventModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">Schedule New Event</h3>
-                <span class="close">&times;</span>
+                <span class="close" onclick="closeModal()">&times;</span>
             </div>
+
             <form id="eventForm">
-                <div class="form-group"><label>Event Name</label><input type="text" id="eventName" required></div>
-                <div class="form-group"><label>Organization</label><select id="eventOrg" required></select></div>
-                <div class="form-group"><label>Event Type</label><select id="eventType"><option>Lunch</option><option>Breakfast</option><option>Thanksgiving Meal</option><option>Camp Lunch</option></select></div>
-                <div class="form-group"><label>Event Date</label><input type="date" id="eventDate" required></div>
-                <div class="form-group"><label>Individuals Served</label><input type="number" id="individualsServed" required></div>
-                <div class="form-group"><label>Notes</label><textarea id="eventNotes" rows="3"></textarea></div>
-                <div class="form-actions"><button type="submit" class="btn-primary">Save Event</button><button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button></div>
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text" id="eventName" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Organization</label>
+                    <select id="eventOrg" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Event Type</label>
+                    <select id="eventType">
+                        <option>Lunch</option>
+                        <option>Breakfast</option>
+                        <option>Thanksgiving Meal</option>
+                        <option>Camp Lunch</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Event Date</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Individuals Served</label>
+                    <input type="number" id="individualsServed" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="eventNotes" rows="3"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Event</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- Personnel Modal -->
     <div id="personnelModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Add Personnel</h3>
                 <span class="close" onclick="closePersonnelModal()">&times;</span>
             </div>
+
             <form id="personnelForm">
-                <div class="form-group"><label for="personnelName">Volunteer Name</label><input type="text" id="personnelName" required></div>
-                <div class="form-group"><label for="personnelEvent">Event Name</label><input type="text" id="personnelEvent" required></div>
-                <div class="form-group"><label for="personnelOrg">Organization Name</label><input type="text" id="personnelOrg" required></div>
-                <div class="form-group"><label for="personnelRole">Role</label><input type="text" id="personnelRole" required></div>
-                <div class="form-group"><label for="personnelHours">Hours Volunteered</label><input type="number" id="personnelHours" min="0" step="0.5" required></div>
+                <div class="form-group">
+                    <label for="personnelName">Volunteer Name</label>
+                    <input type="text" id="personnelName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="personnelEvent">Event Name</label>
+                    <input type="text" id="personnelEvent" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="personnelOrg">Organization Name</label>
+                    <input type="text" id="personnelOrg" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="personnelRole">Role</label>
+                    <input type="text" id="personnelRole" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="personnelHours">Hours Volunteered</label>
+                    <input type="number" id="personnelHours" min="0" step="0.5" required>
+                </div>
+
                 <p id="personnelFormMessage" class="admin-message"></p>
-                <div class="form-actions"><button type="submit" class="btn-primary">Save Personnel</button><button type="button" class="btn-secondary" onclick="closePersonnelModal()">Cancel</button></div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Save Personnel</button>
+                    <button type="button" class="btn-secondary" onclick="closePersonnelModal()">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="spinner"></div>
         <p>Loading data...</p>
     </div>
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- App -->
-<script defer src="js/utils.js"></script>
-<script defer src="js/charts.js"></script>
-<script defer src="js/supabase.js"></script>
-<script defer src="js/app.js"></script>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- App -->
+    <script defer src="js/utils.js"></script>
+    <script defer src="js/charts.js"></script>
+    <script defer src="js/supabase.js"></script>
+    <script defer src="js/app.js"></script>
+</body>
 </html>
