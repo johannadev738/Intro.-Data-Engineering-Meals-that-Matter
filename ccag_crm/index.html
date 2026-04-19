@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +11,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
+
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
                 <i class="fas fa-utensils"></i>
@@ -67,13 +68,12 @@
             </button>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
             <header class="header">
                 <div class="header-search">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search events, organizations, ZIP, or survey details..." id="globalSearch">
+                    <input type="text" placeholder="Search events, organizations, ZIP, or survey details..."
+                        id="globalSearch">
                 </div>
                 <div class="header-actions">
                     <div class="date-range">
@@ -85,9 +85,7 @@
                 </div>
             </header>
 
-            <!-- Dashboard Page -->
             <div id="dashboardPage" class="page active">
-                <!-- Key Metrics -->
                 <div class="metrics-grid" id="metricsGrid">
                     <div class="metric-card">
                         <div class="metric-icon"><i class="fas fa-calendar"></i></div>
@@ -134,7 +132,6 @@
                     </div>
                 </div>
 
-                <!-- Charts Row -->
                 <div class="charts-row">
                     <div class="chart-card">
                         <div class="card-header">
@@ -157,7 +154,6 @@
                     </div>
                 </div>
 
-                <!-- Top Organizations Table -->
                 <div class="data-card">
                     <div class="card-header">
                         <h3>Top Performing Organizations</h3>
@@ -181,7 +177,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Events -->
                 <div class="data-card">
                     <div class="card-header">
                         <h3>Recent Events</h3>
@@ -206,7 +201,6 @@
                 </div>
             </div>
 
-            <!-- Analytics Page -->
             <div id="analyticsPage" class="page">
                 <div class="page-header">
                     <h2>Analytics & Insights</h2>
@@ -217,15 +211,23 @@
                             <option value="organization">By Organization</option>
                             <option value="trend">Retention / Trend Analysis</option>
                         </select>
+
+                        <select id="satisfactionFilter" class="filter-select">
+                            <option value="">All Satisfaction Levels</option>
+                            <option value="5">5 Only</option>
+                            <option value="4">4 Only</option>
+                            <option value="3">3 Only</option>
+                            <option value="2">2 Only</option>
+                            <option value="1">1 Only</option>
+                            <option value="4plus">4 and Above</option>
+                            <option value="3plus">3 and Above</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="analytics-container" id="analyticsContainer">
-                    <!-- Dynamic analytics content -->
-                </div>
+                <div class="analytics-container" id="analyticsContainer"></div>
             </div>
 
-            <!-- Events Page -->
             <div id="eventsPage" class="page">
                 <div class="page-header">
                     <h2>Events Management</h2>
@@ -235,7 +237,9 @@
                 </div>
 
                 <div class="filter-bar">
-                    <input type="text" placeholder="Search events, ZIP, type, or organization..." id="eventsSearch" class="filter-input">
+                    <input type="text" placeholder="Search events, ZIP, type, or organization..." id="eventsSearch"
+                        class="filter-input">
+
                     <select id="eventTypeFilter" class="filter-select">
                         <option value="">All Types</option>
                         <option value="Lunch">Lunch</option>
@@ -243,13 +247,17 @@
                         <option value="Thanksgiving Meal">Thanksgiving Meal</option>
                         <option value="Camp Lunch">Camp Lunch</option>
                     </select>
+
                     <select id="orgFilter" class="filter-select"></select>
+
+                    <select id="disabilityFilter" class="filter-select">
+                        <option value="">All Disability Groups</option>
+                    </select>
                 </div>
 
                 <div class="events-grid" id="eventsGrid"></div>
             </div>
 
-            <!-- Organizations Page -->
             <div id="organizationsPage" class="page">
                 <div class="page-header">
                     <h2>Partner Organizations</h2>
@@ -260,7 +268,6 @@
                 <div class="orgs-grid" id="orgsGrid"></div>
             </div>
 
-            <!-- Personnel Page -->
             <div id="personnelPage" class="page">
                 <div class="page-header">
                     <h2>Personnel Management</h2>
@@ -272,100 +279,106 @@
                 <div class="personnel-list" id="personnelList"></div>
             </div>
 
-            <!-- Reports Page -->
             <div id="reportsPage" class="page">
-                <div class="page-header">
-                    <h2>Generate Reports</h2>
-                </div>
-
-                <div class="report-options">
-                    <div class="report-card" onclick="generateReport('satisfaction')">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>Satisfaction Report</h3>
-                        <p>Organization-level participant satisfaction summary</p>
-                    </div>
-
-                    <div class="report-card" onclick="generateReport('staffing')">
-                        <i class="fas fa-users"></i>
-                        <h3>Staffing Report</h3>
-                        <p>Volunteer support and event staffing status</p>
-                    </div>
-
-                    <div class="report-card" onclick="generateReport('events')">
-                        <i class="fas fa-calendar"></i>
-                        <h3>Event Summary</h3>
-                        <p>Event-level participation, staffing, and satisfaction overview</p>
-                    </div>
-
-                    <div class="report-card" onclick="generateReport('impact')">
-                        <i class="fas fa-heart"></i>
-                        <h3>Retention Report</h3>
-                        <p>Participant visit frequency and retention trends</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Page -->
-            <div id="adminPage" class="page">
-                <div class="page-header">
-                    <h2>Admin User Management</h2>
-                </div>
-
-                <div class="data-card">
+                <<div class="data-card" id="reportOutputCard" style="margin-top: 24px;">
                     <div class="card-header">
-                        <h3>Create or Update User Role</h3>
-                    </div>
-
-                    <div class="admin-form-grid">
-                        <div class="form-group">
-                            <label for="adminUserEmail">User Email</label>
-                            <input type="email" id="adminUserEmail" placeholder="user@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="adminUserRole">Role</label>
-                            <select id="adminUserRole" class="filter-select">
-                                <option value="admin">Admin</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="admin-actions-row">
-                        <button class="btn-primary" id="saveUserRoleBtn">
-                            <i class="fas fa-save"></i> Save Role
+                        <h3 id="reportOutputTitle">Report Output</h3>
+                        <button onclick="exportToExcel('reportOutputTable')">
+                            Export
                         </button>
                     </div>
 
-                    <p id="adminMessage" class="admin-message"></p>
+                    <div class="table-responsive" id="reportOutputContainer">
+                        <p>Select a report to view its data.</p>
+                    </div>
+            </div>
+
+            <div class="report-options">
+                <div class="report-card" onclick="generateReport('satisfaction')">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Satisfaction Report</h3>
+                    <p>Organization-level participant satisfaction summary</p>
                 </div>
 
-                <div class="data-card">
-                    <div class="card-header">
-                        <h3>Existing User Roles</h3>
-                        <button class="btn-primary-sm" id="refreshAdminUsersBtn">
-                            <i class="fas fa-rotate"></i> Refresh
-                        </button>
-                    </div>
+                <div class="report-card" onclick="generateReport('staffing')">
+                    <i class="fas fa-users"></i>
+                    <h3>Staffing Report</h3>
+                    <p>Volunteer support and event staffing status</p>
+                </div>
 
-                    <div class="table-responsive">
-                        <table class="data-table" id="adminUsersTable">
-                            <thead>
-                                <tr>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Updated</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adminUsersBody"></tbody>
-                        </table>
-                    </div>
+                <div class="report-card" onclick="generateReport('events')">
+                    <i class="fas fa-calendar"></i>
+                    <h3>Event Summary</h3>
+                    <p>Event-level participation, staffing, and satisfaction overview</p>
+                </div>
+
+                <div class="report-card" onclick="generateReport('impact')">
+                    <i class="fas fa-heart"></i>
+                    <h3>Retention Report</h3>
+                    <p>Participant visit frequency and retention trends</p>
                 </div>
             </div>
-        </main>
     </div>
 
-    <!-- Event Modal -->
+    <div id="adminPage" class="page">
+        <div class="page-header">
+            <h2>Admin User Management</h2>
+        </div>
+
+        <div class="data-card">
+            <div class="card-header">
+                <h3>Create or Update User Role</h3>
+            </div>
+
+            <div class="admin-form-grid">
+                <div class="form-group">
+                    <label for="adminUserEmail">User Email</label>
+                    <input type="email" id="adminUserEmail" placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="adminUserRole">Role</label>
+                    <select id="adminUserRole" class="filter-select">
+                        <option value="admin">Admin</option>
+                        <option value="viewer">Viewer</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="admin-actions-row">
+                <button class="btn-primary" id="saveUserRoleBtn">
+                    <i class="fas fa-save"></i> Save Role
+                </button>
+            </div>
+
+            <p id="adminMessage" class="admin-message"></p>
+        </div>
+
+        <div class="data-card">
+            <div class="card-header">
+                <h3>Existing User Roles</h3>
+                <button class="btn-primary-sm" id="refreshAdminUsersBtn">
+                    <i class="fas fa-rotate"></i> Refresh
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table" id="adminUsersTable">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Updated</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminUsersBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </main>
+    </div>
+
     <div id="eventModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -417,7 +430,6 @@
         </div>
     </div>
 
-    <!-- Personnel Modal -->
     <div id="personnelModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -461,19 +473,29 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
+    <div id="eventDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Event Details</h3>
+                <span class="close" onclick="closeEventDetailsModal()">&times;</span>
+            </div>
+            <div id="eventDetailsContent"></div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeEventDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="spinner"></div>
         <p>Loading data...</p>
     </div>
 
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- App -->
     <script defer src="js/utils.js"></script>
     <script defer src="js/charts.js"></script>
     <script defer src="js/supabase.js"></script>
     <script defer src="js/app.js"></script>
 </body>
+
 </html>

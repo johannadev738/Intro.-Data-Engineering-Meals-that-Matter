@@ -5,7 +5,6 @@
 // - user_roles
 // =====================================================
 
-// ================= GLOBALS =================
 let allResponses = [];
 let allEventSummaries = [];
 let satisfactionChart = null;
@@ -124,6 +123,7 @@ async function loadAllData() {
         updateOrganizationsGrid();
         updatePersonnelList();
         populateEventFilterOptions();
+        populateDisabilityFilterOptions();
         applyEventFilters();
 
         if (isAdmin()) {
@@ -290,6 +290,34 @@ function getCompletionStatus(row) {
     const hasScore = getSatisfactionScore(row) !== null;
 
     return hasEvent && hasOrg && hasScore ? 'Complete' : 'Incomplete';
+}
+
+function getEventCompletionSummary(event) {
+    let complete = 0;
+    let incomplete = 0;
+
+    event.participants.forEach((row) => {
+        const status = getCompletionStatus(row);
+        if (status === 'Complete') complete++;
+        else incomplete++;
+    });
+
+    return { complete, incomplete };
+}
+
+function matchesSatisfactionFilter(score, filterValue) {
+    if (!filterValue) return true;
+    if (score === null) return false;
+
+    if (filterValue === '5') return score === 5;
+    if (filterValue === '4') return score === 4;
+    if (filterValue === '3') return score === 3;
+    if (filterValue === '2') return score === 2;
+    if (filterValue === '1') return score === 1;
+    if (filterValue === '4plus') return score >= 4;
+    if (filterValue === '3plus') return score >= 3;
+
+    return true;
 }
 
 // ================= EVENT SUMMARIES =================
@@ -674,14 +702,41 @@ function populateEventFilterOptions() {
     }
 }
 
+function populateDisabilityFilterOptions() {
+    const disabilityFilter = document.getElementById('disabilityFilter');
+    if (!disabilityFilter) return;
+
+    const currentValue = disabilityFilter.value || '';
+
+    const disabilities = Array.from(
+        new Set(
+            allResponses
+                .filter((r) => r.form_type === 'participant')
+                .map((r) => getDisabilityValue(getResponseData(r)))
+                .filter(Boolean)
+        )
+    ).sort((a, b) => a.localeCompare(b));
+
+    disabilityFilter.innerHTML = `
+        <option value="">All Disability Groups</option>
+        ${disabilities.map((item) => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join('')}
+    `;
+
+    if (currentValue && disabilities.includes(currentValue)) {
+        disabilityFilter.value = currentValue;
+    }
+}
+
 function applyEventFilters() {
     const eventsSearch = document.getElementById('eventsSearch');
     const eventTypeFilter = document.getElementById('eventTypeFilter');
     const orgFilter = document.getElementById('orgFilter');
+    const disabilityFilter = document.getElementById('disabilityFilter');
 
     const searchTerm = String(eventsSearch?.value || '').toLowerCase().trim();
     const selectedType = String(eventTypeFilter?.value || '').toLowerCase().trim();
     const selectedOrg = String(orgFilter?.value || '').toLowerCase().trim();
+    const selectedDisability = String(disabilityFilter?.value || '').toLowerCase().trim();
 
     const filteredEvents = getEventRecords().filter((eventObj) => {
         const eventName = String(eventObj.eventName || '').toLowerCase();
@@ -699,7 +754,14 @@ function applyEventFilters() {
         const typeMatches = !selectedType || eventType === selectedType;
         const orgMatches = !selectedOrg || organizationName === selectedOrg;
 
-        return searchMatches && typeMatches && orgMatches;
+        const disabilityMatches =
+            !selectedDisability ||
+            eventObj.participants.some((row) => {
+                const disability = getDisabilityValue(getResponseData(row)).toLowerCase();
+                return disability === selectedDisability;
+            });
+
+        return searchMatches && typeMatches && orgMatches && disabilityMatches;
     });
 
     updateEventsGrid(filteredEvents);
@@ -720,6 +782,7 @@ function updateEventsGrid(eventsToRender = null) {
         const avgSat = getEventAverageSatisfaction(event);
         const staffing = getEventStaffingStatus(event);
         const dominantDisability = getDominantDisability(event.participants);
+        const completion = getEventCompletionSummary(event);
 
         return `
             <div class="event-card">
@@ -736,11 +799,96 @@ function updateEventsGrid(eventsToRender = null) {
                     <div class="event-detail"><i class="fas fa-star"></i> Satisfaction: ${escapeHtml(String(avgSat))}${avgSat !== 'N/A' ? '/5' : ''}</div>
                     <div class="event-detail"><i class="fas fa-triangle-exclamation"></i> Staffing: ${escapeHtml(staffing)}</div>
                     <div class="event-detail"><i class="fas fa-wheelchair"></i> Dominant Disability: ${escapeHtml(dominantDisability)}</div>
+                    <div class="event-detail"><i class="fas fa-check-circle"></i> Completion: ${completion.complete} complete / ${completion.incomplete} incomplete</div>
+                </div>
+                <div class="form-actions" style="margin-top: 12px;">
+                    <button type="button" class="btn-primary" onclick="showEventDetails('${escapeHtml(event.key)}')">
+                        View Details
+                    </button>
                 </div>
             </div>
         `;
     }).join('');
 }
+
+// ================= EVENT DETAILS MODAL =================
+window.showEventDetails = function (eventKey) {
+    const modal = document.getElementById('eventDetailsModal');
+    const content = document.getElementById('eventDetailsContent');
+    if (!modal || !content) return;
+
+    const event = allEventSummaries.find((e) => e.key === eventKey);
+    if (!event) {
+        content.innerHTML = '<p>Event details not found.</p>';
+        modal.style.display = 'flex';
+        return;
+    }
+
+    const avgSat = getEventAverageSatisfaction(event);
+    const staffing = getEventStaffingStatus(event);
+    const dominantDisability = getDominantDisability(event.participants);
+    const completion = getEventCompletionSummary(event);
+
+    content.innerHTML = `
+        <div class="data-card">
+            <p><strong>Event:</strong> ${escapeHtml(event.eventName)}</p>
+            <p><strong>Organization:</strong> ${escapeHtml(event.organization)}</p>
+            <p><strong>Date:</strong> ${escapeHtml(new Date(event.date).toLocaleDateString())}</p>
+            <p><strong>Type:</strong> ${escapeHtml(event.eventType)}</p>
+            <p><strong>ZIP:</strong> ${escapeHtml(event.zip)}</p>
+            <p><strong>Participants:</strong> ${event.participants.length}</p>
+            <p><strong>Volunteers:</strong> ${event.volunteers.length}</p>
+            <p><strong>Staff Rows:</strong> ${event.staff.length}</p>
+            <p><strong>Average Satisfaction:</strong> ${escapeHtml(String(avgSat))}${avgSat !== 'N/A' ? '/5' : ''}</p>
+            <p><strong>Staffing Status:</strong> ${escapeHtml(staffing)}</p>
+            <p><strong>Dominant Disability:</strong> ${escapeHtml(dominantDisability)}</p>
+            <p><strong>Participant Completion:</strong> ${completion.complete} complete / ${completion.incomplete} incomplete</p>
+        </div>
+
+        <div class="data-card">
+            <div class="card-header">
+                <h3>Participant Review Summary</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Disability Group</th>
+                            <th>Satisfaction</th>
+                            <th>Visit Frequency</th>
+                            <th>Completion Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${event.participants.length === 0 ? `
+                            <tr><td colspan="4">No participant responses for this event.</td></tr>
+                        ` : event.participants.map((row) => {
+                            const data = getResponseData(row);
+                            const score = getSatisfactionScore(row);
+                            const status = getCompletionStatus(row);
+
+                            return `
+                                <tr>
+                                    <td>${escapeHtml(getDisabilityValue(data))}</td>
+                                    <td>${score !== null ? score : 'N/A'}</td>
+                                    <td>${escapeHtml(getVisitFrequency(data))}</td>
+                                    <td>${escapeHtml(status)}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+};
+
+window.closeEventDetailsModal = function () {
+    const modal = document.getElementById('eventDetailsModal');
+    if (modal) modal.style.display = 'none';
+};
 
 // ================= ANALYTICS =================
 function renderZipCodeAnalytics() {
@@ -969,6 +1117,9 @@ function renderDisabilityAnalytics() {
     const container = document.getElementById('analyticsContainer');
     if (!container) return;
 
+    const satisfactionFilter = document.getElementById('satisfactionFilter');
+    const selectedFilter = String(satisfactionFilter?.value || '').trim();
+
     const participantRows = allResponses.filter((r) => r.form_type === 'participant');
     const disabilityMap = new Map();
 
@@ -976,6 +1127,8 @@ function renderDisabilityAnalytics() {
         const data = getResponseData(row);
         const disability = getDisabilityValue(data);
         const score = getSatisfactionScore(row);
+
+        if (!matchesSatisfactionFilter(score, selectedFilter)) return;
 
         if (!disabilityMap.has(disability)) {
             disabilityMap.set(disability, {
@@ -1017,7 +1170,9 @@ function renderDisabilityAnalytics() {
                         </tr>
                     </thead>
                     <tbody>
-                        ${rows.map((row) => `
+                        ${rows.length === 0 ? `
+                            <tr><td colspan="3">No disability data matches the selected satisfaction filter.</td></tr>
+                        ` : rows.map((row) => `
                             <tr>
                                 <td>${escapeHtml(row.name)}</td>
                                 <td>${row.count}</td>
@@ -1345,33 +1500,165 @@ window.exportChart = function (chartId) {
 window.generateReport = function (type) {
     if (!requireAdminAction('generate reports')) return;
 
+    const titleEl = document.getElementById('reportOutputTitle');
+    const container = document.getElementById('reportOutputContainer');
+
+    if (!titleEl || !container) {
+        alert('Report output area is missing.');
+        return;
+    }
+
     if (type === 'satisfaction') {
-        const analyticsTypeSelect = document.getElementById('analyticsType');
-        if (analyticsTypeSelect) analyticsTypeSelect.value = 'organization';
-        updateAnalytics();
-        alert('Satisfaction report generated in Analytics → By Organization');
+        titleEl.textContent = 'Satisfaction Report by Organization';
+
+        const orgMap = new Map();
+
+        allEventSummaries.forEach((event) => {
+            if (!orgMap.has(event.organization)) {
+                orgMap.set(event.organization, {
+                    events: 0,
+                    participants: 0,
+                    volunteers: 0,
+                    satisfactionSum: 0,
+                    satisfactionCount: 0
+                });
+            }
+
+            const org = orgMap.get(event.organization);
+            org.events += 1;
+            org.participants += event.participants.length;
+            org.volunteers += event.volunteers.length;
+
+            const avg = parseFloat(getEventAverageSatisfaction(event));
+            if (!isNaN(avg)) {
+                org.satisfactionSum += avg;
+                org.satisfactionCount += 1;
+            }
+        });
+
+        const rows = Array.from(orgMap.entries()).map(([name, stats]) => ({
+            name,
+            events: stats.events,
+            participants: stats.participants,
+            volunteers: stats.volunteers,
+            avgSatisfaction: stats.satisfactionCount > 0
+                ? (stats.satisfactionSum / stats.satisfactionCount).toFixed(1)
+                : 'N/A'
+        }));
+
+        container.innerHTML = `
+            <table class="data-table" id="reportOutputTable">
+                <thead>
+                    <tr>
+                        <th>Organization</th>
+                        <th>Events</th>
+                        <th>Participants</th>
+                        <th>Volunteers</th>
+                        <th>Avg Satisfaction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows.map(row => `
+                        <tr>
+                            <td>${escapeHtml(row.name)}</td>
+                            <td>${row.events}</td>
+                            <td>${row.participants}</td>
+                            <td>${row.volunteers}</td>
+                            <td>${escapeHtml(row.avgSatisfaction)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
         return;
     }
 
     if (type === 'staffing') {
-        alert('Use the Events page to view staffing status for each event.');
+        titleEl.textContent = 'Staffing Report by Event';
+
+        container.innerHTML = `
+            <table class="data-table" id="reportOutputTable">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Organization</th>
+                        <th>Participants</th>
+                        <th>Volunteers</th>
+                        <th>Staffing Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${allEventSummaries.map(event => `
+                        <tr>
+                            <td>${escapeHtml(event.eventName)}</td>
+                            <td>${escapeHtml(event.organization)}</td>
+                            <td>${event.participants.length}</td>
+                            <td>${event.volunteers.length}</td>
+                            <td>${escapeHtml(getEventStaffingStatus(event))}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
         return;
     }
 
     if (type === 'events') {
-        alert('Use the Events page to review event summaries.');
+        titleEl.textContent = 'Event Summary Report';
+
+        container.innerHTML = `
+            <table class="data-table" id="reportOutputTable">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Organization</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Participants</th>
+                        <th>Satisfaction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${allEventSummaries.map(event => `
+                        <tr>
+                            <td>${escapeHtml(event.eventName)}</td>
+                            <td>${escapeHtml(event.organization)}</td>
+                            <td>${escapeHtml(new Date(event.date).toLocaleDateString())}</td>
+                            <td>${escapeHtml(event.eventType)}</td>
+                            <td>${event.participants.length}</td>
+                            <td>${escapeHtml(String(getEventAverageSatisfaction(event)))}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
         return;
     }
 
     if (type === 'impact') {
-        const analyticsTypeSelect = document.getElementById('analyticsType');
-        if (analyticsTypeSelect) analyticsTypeSelect.value = 'trend';
-        updateAnalytics();
-        alert('Impact/retention report generated in Analytics → Trend Analysis');
-        return;
-    }
+        titleEl.textContent = 'Retention Report';
 
-    alert(`Generating ${type} report...`);
+        const retention = calculateRetention();
+
+        container.innerHTML = `
+            <table class="data-table" id="reportOutputTable">
+                <thead>
+                    <tr>
+                        <th>Visit Frequency</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${Object.entries(retention).map(([label, count]) => `
+                        <tr>
+                            <td>${escapeHtml(label)}</td>
+                            <td>${count}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
 };
 
 // ================= LOGOUT / MODALS =================
@@ -1550,6 +1837,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    const satisfactionFilter = document.getElementById('satisfactionFilter');
+    if (satisfactionFilter) {
+        satisfactionFilter.addEventListener('change', () => {
+            updateAnalytics();
+        });
+    }
+
     const eventsSearch = document.getElementById('eventsSearch');
     if (eventsSearch) {
         eventsSearch.addEventListener('input', () => {
@@ -1567,6 +1861,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const orgFilter = document.getElementById('orgFilter');
     if (orgFilter) {
         orgFilter.addEventListener('change', () => {
+            applyEventFilters();
+        });
+    }
+
+    const disabilityFilter = document.getElementById('disabilityFilter');
+    if (disabilityFilter) {
+        disabilityFilter.addEventListener('change', () => {
             applyEventFilters();
         });
     }
