@@ -863,11 +863,11 @@ window.showEventDetails = function (eventKey) {
                         ${event.participants.length === 0 ? `
                             <tr><td colspan="4">No participant responses for this event.</td></tr>
                         ` : event.participants.map((row) => {
-                            const data = getResponseData(row);
-                            const score = getSatisfactionScore(row);
-                            const status = getCompletionStatus(row);
+        const data = getResponseData(row);
+        const score = getSatisfactionScore(row);
+        const status = getCompletionStatus(row);
 
-                            return `
+        return `
                                 <tr>
                                     <td>${escapeHtml(getDisabilityValue(data))}</td>
                                     <td>${score !== null ? score : 'N/A'}</td>
@@ -875,7 +875,7 @@ window.showEventDetails = function (eventKey) {
                                     <td>${escapeHtml(status)}</td>
                                 </tr>
                             `;
-                        }).join('')}
+    }).join('')}
                     </tbody>
                 </table>
             </div>
@@ -1739,6 +1739,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     applyRoleRestrictions();
     initNavigation();
 
+    const pipelineForm = document.getElementById('pipelineForm');
+    if (pipelineForm) {
+        pipelineForm.addEventListener('submit', savePipelineRecord);
+    }
+
+
     const saveUserRoleBtn = document.getElementById('saveUserRoleBtn');
     if (saveUserRoleBtn) {
         saveUserRoleBtn.addEventListener('click', async () => {
@@ -1919,6 +1925,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setTimeout(async () => {
         await loadAllData();
+        await loadPipelineData();   
     }, 200);
 });
 
@@ -1952,4 +1959,239 @@ style.textContent = `
     .badge-camp-lunch { background: #16A085; }
     .badge-unknown { background: #666; }
 `;
+
+// ================= PIPELINE =================
+
+let pipelineRows = [];
+
+const pipelineStages = [
+    'New',
+    'Initial Meeting',
+    'Documentation and Planning',
+    'Finalizing',
+    'Assembly',
+    'Event',
+    'Follow-Up'
+];
+
+function getPipelineData(row) {
+    const data = getResponseData(row);
+
+    return {
+        id: row.id,
+        organizationName: row.organization_name || data.organization_name || 'Unknown',
+        organizationEmail: data.organization_email || '',
+        organizationPhone: data.organization_phone || '',
+        contactPerson: data.contact_person || '',
+        contactRole: data.contact_role || '',
+        contactEmail: data.contact_email || '',
+        contactPhone: data.contact_phone || '',
+        internalOwner: data.internal_owner || '',
+        eventType: data.event_type || 'Unknown',
+        outreachType: data.outreach_type || 'Temporarily Unavailable',
+        currentStage: data.current_stage || 'New',
+        pipelineStatus: data.pipeline_status || 'Active',
+        notes: data.notes || ''
+    };
+}
+
+async function loadPipelineData() {
+    const supabaseClient = window.supabaseClient || window.ccagSupabase?.client;
+    if (!supabaseClient) return;
+
+    const { data, error } = await supabaseClient
+        .from('form_responses')
+        .select('*')
+        .eq('form_type', 'pipeline')
+        .order('submitted_at', { ascending: false });
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    pipelineRows = data || [];
+    renderPipelineTable();
+}
+
+function renderPipelineTable() {
+    const tbody = document.getElementById('pipelineTableBody');
+    if (!tbody) return;
+
+    if (pipelineRows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8">No pipeline records yet</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = pipelineRows.map(row => {
+        const item = getPipelineData(row);
+
+        return `
+        <tr>
+            <td>
+                <strong>${escapeHtml(item.organizationName)}</strong><br>
+                <small>${escapeHtml(item.organizationEmail || '')}</small><br>
+                <small>${escapeHtml(item.organizationPhone || '')}</small>
+            </td>
+            <td>
+                <strong>${escapeHtml(item.contactPerson || '—')}</strong><br>
+                <small>${escapeHtml(item.contactRole || '')}</small><br>
+                <small>${escapeHtml(item.contactEmail || '')}</small><br>
+                <small>${escapeHtml(item.contactPhone || '')}</small>
+            </td>
+            <td>${escapeHtml(item.internalOwner || '—')}</td>
+            <td>${escapeHtml(item.eventType)}</td>
+            <td>${escapeHtml(item.outreachType)}</td>
+            <td><span class="status-badge status-high">${escapeHtml(item.currentStage)}</span></td>
+            <td><span class="status-badge status-high">${escapeHtml(item.pipelineStatus)}</span></td>
+            <td>
+                <button class="btn-primary-sm" onclick="advancePipelineStage(${item.id})">Next</button>
+                <button class="btn-primary-sm" onclick="markPipelineComplete(${item.id})">Complete</button>
+                <button class="btn-danger" onclick="markPipelineCancelled(${item.id})">Cancel</button>
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+// ================= MODAL =================
+
+window.showAddPipelineModal = function () {
+    const modal = document.getElementById('pipelineModal');
+    const form = document.getElementById('pipelineForm');
+
+    if (form) form.reset();
+
+    const outreach = document.getElementById('pipelineOutreachType');
+    const stage = document.getElementById('pipelineStage');
+    const status = document.getElementById('pipelineStatus');
+    const eventType = document.getElementById('pipelineEventType');
+
+    if (outreach) outreach.value = 'Temporarily Unavailable';
+    if (stage) stage.value = 'New';
+    if (status) status.value = 'Active';
+    if (eventType) eventType.value = 'Lunch';
+
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closePipelineModal = function () {
+    const modal = document.getElementById('pipelineModal');
+    if (modal) modal.style.display = 'none';
+};
+
+// ================= CREATE =================
+
+async function savePipelineRecord(e) {
+    e.preventDefault();
+
+    const supabaseClient = window.supabaseClient || window.ccagSupabase?.client;
+
+    const name = document.getElementById('pipelineOrgName').value.trim();
+    const orgEmail = document.getElementById('pipelineOrgEmail').value.trim();
+    const orgPhone = document.getElementById('pipelineOrgPhone').value.trim();
+    const contactPerson = document.getElementById('pipelineContactPerson').value.trim();
+    const contactRole = document.getElementById('pipelineContactRole').value.trim();
+    const contactEmail = document.getElementById('pipelineContactEmail').value.trim();
+    const contactPhone = document.getElementById('pipelineContactPhone').value.trim();
+    const internalOwner = document.getElementById('pipelineInternalOwner').value.trim();
+    const eventType = document.getElementById('pipelineEventType').value;
+    const stage = document.getElementById('pipelineStage').value;
+    const status = document.getElementById('pipelineStatus').value;
+    const notes = document.getElementById('pipelineNotes').value.trim();
+
+    if (!name) {
+        alert("Organization required");
+        return;
+    }
+
+    const payload = {
+        form_type: 'pipeline',
+        submitted_at: new Date().toISOString(),
+        organization_name: name,
+        response_data: {
+            organization_name: name,
+            organization_email: orgEmail,
+            organization_phone: orgPhone,
+            contact_person: contactPerson,
+            contact_role: contactRole,
+            contact_email: contactEmail,
+            contact_phone: contactPhone,
+            internal_owner: internalOwner,
+            event_type: eventType,
+            outreach_type: 'Temporarily Unavailable',
+            current_stage: stage,
+            pipeline_status: status,
+            notes: notes
+        }
+    };
+
+    const { error } = await supabaseClient
+        .from('form_responses')
+        .insert(payload);
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    closePipelineModal();
+    loadPipelineData();
+}
+
+// ================= UPDATE =================
+
+async function advancePipelineStage(id) {
+    const supabaseClient = window.supabaseClient || window.ccagSupabase?.client;
+
+    const row = pipelineRows.find(r => r.id === id);
+    if (!row) return;
+
+    const data = getResponseData(row);
+    const current = data.current_stage || 'New';
+
+    let index = pipelineStages.indexOf(current);
+    if (index < pipelineStages.length - 1) index++;
+
+    const { error } = await supabaseClient
+        .from('form_responses')
+        .update({
+            response_data: {
+                ...data,
+                current_stage: pipelineStages[index]
+            }
+        })
+        .eq('id', id);
+
+    if (!error) loadPipelineData();
+}
+
+async function markPipelineComplete(id) {
+    updatePipelineStatus(id, 'Complete');
+}
+
+async function markPipelineCancelled(id) {
+    updatePipelineStatus(id, 'Cancelled');
+}
+
+async function updatePipelineStatus(id, status) {
+    const supabaseClient = window.supabaseClient || window.ccagSupabase?.client;
+
+    const row = pipelineRows.find(r => r.id === id);
+    if (!row) return;
+
+    const data = getResponseData(row);
+
+    const { error } = await supabaseClient
+        .from('form_responses')
+        .update({
+            response_data: {
+                ...data,
+                pipeline_status: status
+            }
+        })
+        .eq('id', id);
+
+    if (!error) loadPipelineData();
+};
 document.head.appendChild(style);

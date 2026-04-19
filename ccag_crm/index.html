@@ -25,6 +25,10 @@
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
+                <a href="#pipelinePage" class="nav-item" data-page="pipeline">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Pipeline</span>
+                </a>
                 <a href="#analyticsPage" class="nav-item" data-page="analytics">
                     <i class="fas fa-chart-line"></i>
                     <span>Analytics</span>
@@ -198,6 +202,133 @@
                             <tbody id="recentEventsBody"></tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            <div id="pipelinePage" class="page">
+
+                <div class="page-header">
+                    <h2>Organization Pipeline</h2>
+                    <button class="btn-primary" onclick="showAddPipelineModal()">
+                        + New Organization
+                    </button>
+                </div>
+
+                <div class="data-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>New</th>
+                                <th>Initial Meeting</th>
+                                <th>Documentation and Planning</th>
+                                <th>Finalizing</th>
+                                <th>Assembly</th>
+                                <th>Event</th>
+                                <th>Follow-Up</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pipelineTableBody"></tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div id="pipelineModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>New Outreach</h3>
+                        <span class="close" onclick="closePipelineModal()">&times;</span>
+                    </div>
+
+                    <form id="pipelineForm">
+                        <div class="form-group">
+                            <label for="pipelineOrgName">Organization Name</label>
+                            <input type="text" id="pipelineOrgName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineOrgEmail">Organization Email</label>
+                            <input type="email" id="pipelineOrgEmail">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineOrgPhone">Organization Phone</label>
+                            <input type="text" id="pipelineOrgPhone">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactPerson">Contact Person</label>
+                            <input type="text" id="pipelineContactPerson">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactRole">Contact Person Role</label>
+                            <input type="text" id="pipelineContactRole" placeholder="Coordinator, Director, Manager...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactEmail">Contact Email</label>
+                            <input type="email" id="pipelineContactEmail">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactPhone">Contact Phone</label>
+                            <input type="text" id="pipelineContactPhone">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineInternalOwner">Who We're Contacting From Our Team</label>
+                            <input type="text" id="pipelineInternalOwner" placeholder="Your team member name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineEventType">Type of Event</label>
+                            <select id="pipelineEventType">
+                                <option>Lunch</option>
+                                <option>Breakfast</option>
+                                <option>Thanksgiving Meal</option>
+                                <option>Camp Lunch</option>
+                                <option>Community Outreach</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineOutreachType">Outreach Type</label>
+                            <input type="text" id="pipelineOutreachType" value="Temporarily Unavailable" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineStage">Stage</label>
+                            <select id="pipelineStage">
+                                <option>New</option>
+                                <option>Initial Meeting</option>
+                                <option>Documentation and Planning</option>
+                                <option>Finalizing</option>
+                                <option>Assembly</option>
+                                <option>Event</option>
+                                <option>Follow-Up</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineStatus">Status</label>
+                            <select id="pipelineStatus">
+                                <option>Active</option>
+                                <option>Complete</option>
+                                <option>Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineNotes">Notes</label>
+                            <textarea id="pipelineNotes" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Save</button>
+                            <button type="button" class="btn-secondary" onclick="closePipelineModal()">Cancel</button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
