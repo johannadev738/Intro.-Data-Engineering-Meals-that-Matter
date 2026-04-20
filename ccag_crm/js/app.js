@@ -1925,7 +1925,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     setTimeout(async () => {
         await loadAllData();
-        await loadPipelineData();   
+        await loadPipelineData();
     }, 200);
 });
 
@@ -1977,6 +1977,11 @@ const pipelineStages = [
 function getPipelineData(row) {
     const data = getResponseData(row);
 
+    let stage = data.current_stage || 'New';
+    if (!pipelineStages.includes(stage)) {
+        stage = 'New';
+    }
+
     return {
         id: row.id,
         organizationName: row.organization_name || data.organization_name || 'Unknown',
@@ -1989,7 +1994,7 @@ function getPipelineData(row) {
         internalOwner: data.internal_owner || '',
         eventType: data.event_type || 'Unknown',
         outreachType: data.outreach_type || 'Temporarily Unavailable',
-        currentStage: data.current_stage || 'New',
+        currentStage: stage,
         pipelineStatus: data.pipeline_status || 'Active',
         notes: data.notes || ''
     };
@@ -2014,45 +2019,146 @@ async function loadPipelineData() {
     renderPipelineTable();
 }
 
-function renderPipelineTable() {
-    const tbody = document.getElementById('pipelineTableBody');
-    if (!tbody) return;
+function stageToId(stage) {
+    return String(stage || '')
+        .toLowerCase()
+        .replace(/&/g, 'and')
+        .replace(/\s+/g, '-');
+}
 
-    if (pipelineRows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8">No pipeline records yet</td></tr>`;
+function renderPipelineTable() {
+    const stageIds = [
+        'new',
+        'initial-meeting',
+        'documentation-and-planning',
+        'finalizing',
+        'assembly',
+        'event',
+        'follow-up'
+    ];
+
+    stageIds.forEach((id) => {
+        const column = document.getElementById(`pipeline-${id}`);
+        if (column) {
+            column.innerHTML = '';
+        }
+    });
+
+    if (!pipelineRows.length) {
+        stageIds.forEach((id) => {
+            const column = document.getElementById(`pipeline-${id}`);
+            if (column) {
+                column.innerHTML = '<div class="pipeline-empty">No records</div>';
+            }
+        });
         return;
     }
 
-    tbody.innerHTML = pipelineRows.map(row => {
-        const item = getPipelineData(row);
+    const grouped = {
+        'new': [],
+        'initial-meeting': [],
+        'documentation-and-planning': [],
+        'finalizing': [],
+        'assembly': [],
+        'event': [],
+        'follow-up': []
+    };
 
-        return `
-        <tr>
-            <td>
-                <strong>${escapeHtml(item.organizationName)}</strong><br>
-                <small>${escapeHtml(item.organizationEmail || '')}</small><br>
-                <small>${escapeHtml(item.organizationPhone || '')}</small>
-            </td>
-            <td>
-                <strong>${escapeHtml(item.contactPerson || '—')}</strong><br>
-                <small>${escapeHtml(item.contactRole || '')}</small><br>
-                <small>${escapeHtml(item.contactEmail || '')}</small><br>
-                <small>${escapeHtml(item.contactPhone || '')}</small>
-            </td>
-            <td>${escapeHtml(item.internalOwner || '—')}</td>
-            <td>${escapeHtml(item.eventType)}</td>
-            <td>${escapeHtml(item.outreachType)}</td>
-            <td><span class="status-badge status-high">${escapeHtml(item.currentStage)}</span></td>
-            <td><span class="status-badge status-high">${escapeHtml(item.pipelineStatus)}</span></td>
-            <td>
-                <button class="btn-primary-sm" onclick="advancePipelineStage(${item.id})">Next</button>
-                <button class="btn-primary-sm" onclick="markPipelineComplete(${item.id})">Complete</button>
-                <button class="btn-danger" onclick="markPipelineCancelled(${item.id})">Cancel</button>
-            </td>
-        </tr>
-        `;
-    }).join('');
+    pipelineRows.forEach((row) => {
+        const item = getPipelineData(row);
+        const stageKey = stageToId(item.currentStage);
+
+        if (grouped[stageKey]) {
+            grouped[stageKey].push(item);
+        }
+    });
+
+    Object.entries(grouped).forEach(([stageKey, items]) => {
+        const column = document.getElementById(`pipeline-${stageKey}`);
+        if (!column) return;
+
+        if (!items.length) {
+            column.innerHTML = '<div class="pipeline-empty">No records</div>';
+            return;
+        }
+
+        column.innerHTML = items.map((item) => `
+            <div class="pipeline-card" onclick="openPipelineDetails(${item.id})">
+                ${escapeHtml(item.organizationName)}
+            </div>
+        `).join('');
+    });
 }
+
+window.openPipelineDetails = function (id) {
+    const row = pipelineRows.find((r) => r.id === id);
+    if (!row) return;
+
+    const item = getPipelineData(row);
+    const modal = document.getElementById('pipelineDetailsModal');
+    const content = document.getElementById('pipelineDetailsContent');
+
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+        <div class="pipeline-detail-grid">
+            <div class="pipeline-detail-card">
+                <h4>Organization</h4>
+                <p><strong>Name:</strong> ${escapeHtml(item.organizationName)}</p>
+                <p><strong>Email:</strong> ${escapeHtml(item.organizationEmail || '—')}</p>
+                <p><strong>Phone:</strong> ${escapeHtml(item.organizationPhone || '—')}</p>
+            </div>
+
+            <div class="pipeline-detail-card">
+                <h4>Contact Person</h4>
+                <p><strong>Name:</strong> ${escapeHtml(item.contactPerson || '—')}</p>
+                <p><strong>Role:</strong> ${escapeHtml(item.contactRole || '—')}</p>
+                <p><strong>Email:</strong> ${escapeHtml(item.contactEmail || '—')}</p>
+                <p><strong>Phone:</strong> ${escapeHtml(item.contactPhone || '—')}</p>
+            </div>
+
+            <div class="pipeline-detail-card">
+                <h4>Outreach</h4>
+                <p><strong>Our Contact:</strong> ${escapeHtml(item.internalOwner || '—')}</p>
+                <p><strong>Event Type:</strong> ${escapeHtml(item.eventType || '—')}</p>
+                <p><strong>Outreach Type:</strong> ${escapeHtml(item.outreachType || '—')}</p>
+            </div>
+
+            <div class="pipeline-detail-card">
+                <h4>Progress</h4>
+                <p><strong>Stage:</strong> ${escapeHtml(item.currentStage)}</p>
+                <p><strong>Status:</strong> ${escapeHtml(item.pipelineStatus)}</p>
+                <p><strong>Notes:</strong> ${escapeHtml(item.notes || '—')}</p>
+            </div>
+        </div>
+        <div class="form-actions" style="margin-top:16px;">
+            <button class="btn-primary" onclick="revertPipelineStage(${item.id}); closePipelineDetailsModal();">
+                Revert Back
+            </button>
+
+            <button class="btn-primary" onclick="advancePipelineStage(${item.id}); closePipelineDetailsModal();">
+                Next Stage
+            </button>
+
+            <button class="btn-primary" onclick="markPipelineComplete(${item.id}); closePipelineDetailsModal();">
+                Complete
+            </button>
+
+            <button class="btn-danger" onclick="markPipelineCancelled(${item.id}); closePipelineDetailsModal();">
+                Cancel
+            </button>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+};
+
+window.closePipelineDetailsModal = function () {
+    const modal = document.getElementById('pipelineDetailsModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
 
 // ================= MODAL =================
 
@@ -2164,6 +2270,44 @@ async function advancePipelineStage(id) {
         .eq('id', id);
 
     if (!error) loadPipelineData();
+}
+
+async function revertPipelineStage(id) {
+    const supabaseClient = window.supabaseClient || window.ccagSupabase?.client;
+
+    const row = pipelineRows.find(r => r.id === id);
+    if (!row) return;
+
+    const data = getResponseData(row);
+    const current = data.current_stage || 'New';
+
+    let index = pipelineStages.indexOf(current);
+
+    // If not found, reset to New
+    if (index === -1) {
+        index = 0;
+    }
+
+    // Move back one step (but not below 0)
+    if (index > 0) {
+        index--;
+    }
+
+    const previousStage = pipelineStages[index];
+
+    const { error } = await supabaseClient
+        .from('form_responses')
+        .update({
+            response_data: {
+                ...data,
+                current_stage: previousStage
+            }
+        })
+        .eq('id', id);
+
+    if (!error) {
+        loadPipelineData();
+    }
 }
 
 async function markPipelineComplete(id) {
