@@ -605,31 +605,68 @@ function updateOrganizationsGrid() {
 
     const orgMap = new Map();
 
-    allResponses.forEach((r) => {
-        if (r.form_type === 'organization') {
-            const data = getResponseData(r);
-            const orgName = data['Organization Name'];
+    allResponses.forEach((row) => {
+        const data = getResponseData(row);
 
-            if (orgName && !orgMap.has(orgName)) {
-                orgMap.set(orgName, {
-                    contact: data['Contact Person'] || 'N/A',
-                    email: data['Email Address'] || 'N/A'
-                });
+        const orgName =
+            row.organization_name ||
+            data.organization_name ||
+            data['Organization Name'] ||
+            '';
+
+        if (!orgName) return;
+
+        const normalizedName = orgName.trim().toLowerCase();
+
+        if (!orgMap.has(normalizedName)) {
+            orgMap.set(normalizedName, {
+                orgName: orgName.trim(),
+                contact: data.contact_person || data['Contact Person'] || data.contact_name || 'N/A',
+                email: data.organization_email || data['Email Address'] || data.contact_email || 'N/A',
+                phone: data.organization_phone || data['Phone Number'] || data.contact_phone || 'N/A',
+                sourceType: row.form_type || 'unknown'
+            });
+        } else {
+            // Fill missing info if a later row has better data
+            const existing = orgMap.get(normalizedName);
+
+            const betterContact =
+                existing.contact === 'N/A' && (data.contact_person || data['Contact Person'] || data.contact_name);
+            const betterEmail =
+                existing.email === 'N/A' && (data.organization_email || data['Email Address'] || data.contact_email);
+            const betterPhone =
+                existing.phone === 'N/A' && (data.organization_phone || data['Phone Number'] || data.contact_phone);
+
+            if (betterContact) {
+                existing.contact = data.contact_person || data['Contact Person'] || data.contact_name;
+            }
+
+            if (betterEmail) {
+                existing.email = data.organization_email || data['Email Address'] || data.contact_email;
+            }
+
+            if (betterPhone) {
+                existing.phone = data.organization_phone || data['Phone Number'] || data.contact_phone;
             }
         }
     });
 
-    if (orgMap.size === 0) {
+    const organizations = Array.from(orgMap.values()).sort((a, b) =>
+        a.orgName.localeCompare(b.orgName)
+    );
+
+    if (organizations.length === 0) {
         container.innerHTML = '<div class="data-card"><p>No organization data yet</p></div>';
         return;
     }
 
-    container.innerHTML = Array.from(orgMap.entries()).map(([name, info]) => `
+    container.innerHTML = organizations.map((org) => `
         <div class="org-card">
-            <h3><i class="fas fa-building"></i> ${escapeHtml(name)}</h3>
+            <h3><i class="fas fa-building"></i> ${escapeHtml(org.orgName)}</h3>
             <div class="org-details">
-                <div class="org-detail"><i class="fas fa-user"></i> ${escapeHtml(info.contact)}</div>
-                <div class="org-detail"><i class="fas fa-envelope"></i> ${escapeHtml(info.email)}</div>
+                <div class="org-detail"><i class="fas fa-user"></i> ${escapeHtml(org.contact)}</div>
+                <div class="org-detail"><i class="fas fa-envelope"></i> ${escapeHtml(org.email)}</div>
+                <div class="org-detail"><i class="fas fa-phone"></i> ${escapeHtml(org.phone)}</div>
             </div>
         </div>
     `).join('');
@@ -2242,7 +2279,8 @@ async function savePipelineRecord(e) {
     }
 
     closePipelineModal();
-    loadPipelineData();
+    await loadAllData();
+    await loadPipelineData();
 }
 
 // ================= UPDATE =================
