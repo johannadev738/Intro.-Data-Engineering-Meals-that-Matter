@@ -250,6 +250,141 @@
                     </div>
                 </div>
             </div>
+
+            <div id="orgModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add Organization</h3>
+                        <span class="close" onclick="closeOrgModal()">&times;</span>
+                    </div>
+
+                    <form id="orgForm">
+                        <div class="form-group">
+                            <label for="orgName">Organization Name</label>
+                            <input type="text" id="orgName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="orgContact">Contact Person</label>
+                            <input type="text" id="orgContact">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="orgEmail">Organization Email</label>
+                            <input type="email" id="orgEmail">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="orgPhone">Organization Phone</label>
+                            <input type="text" id="orgPhone">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Save</button>
+                            <button type="button" class="btn-secondary" onclick="closeOrgModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="pipelineModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>New Outreach</h3>
+                        <span class="close" onclick="closePipelineModal()">&times;</span>
+                    </div>
+
+                    <form id="pipelineForm">
+                        <div class="form-group">
+                            <label for="pipelineOrgName">Organization Name</label>
+                            <input type="text" id="pipelineOrgName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineOrgEmail">Organization Email</label>
+                            <input type="email" id="pipelineOrgEmail">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineOrgPhone">Organization Phone</label>
+                            <input type="text" id="pipelineOrgPhone">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactPerson">Contact Person</label>
+                            <input type="text" id="pipelineContactPerson">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactRole">Contact Person Role</label>
+                            <input type="text" id="pipelineContactRole" placeholder="Coordinator, Director, Manager...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactEmail">Contact Email</label>
+                            <input type="email" id="pipelineContactEmail">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineContactPhone">Contact Phone</label>
+                            <input type="text" id="pipelineContactPhone">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineInternalOwner">Who We're Contacting From Our Team</label>
+                            <input type="text" id="pipelineInternalOwner" placeholder="Your team member name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineEventType">Type of Event</label>
+                            <select id="pipelineEventType">
+                                <option>Lunch</option>
+                                <option>Breakfast</option>
+                                <option>Thanksgiving Meal</option>
+                                <option>Camp Lunch</option>
+                                <option>Community Outreach</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineOutreachType">Outreach Type</label>
+                            <input type="text" id="pipelineOutreachType" value="Temporarily Unavailable" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineStage">Stage</label>
+                            <select id="pipelineStage">
+                                <option>New</option>
+                                <option>Initial Meeting</option>
+                                <option>Documentation and Planning</option>
+                                <option>Finalizing</option>
+                                <option>Assembly</option>
+                                <option>Event</option>
+                                <option>Follow-Up</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineStatus">Status</label>
+                            <select id="pipelineStatus">
+                                <option>Active</option>
+                                <option>Complete</option>
+                                <option>Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pipelineNotes">Notes</label>
+                            <textarea id="pipelineNotes" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Save</button>
+                            <button type="button" class="btn-secondary" onclick="closePipelineModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div id="pipelineDetailsModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -339,7 +474,7 @@
             </div>
 
             <div id="reportsPage" class="page">
-                <<div class="data-card" id="reportOutputCard" style="margin-top: 24px;">
+                <div class="data-card" id="reportOutputCard" style="margin-top: 24px;">
                     <div class="card-header">
                         <h3 id="reportOutputTitle">Report Output</h3>
                         <button onclick="exportToExcel('reportOutputTable')">
@@ -350,92 +485,92 @@
                     <div class="table-responsive" id="reportOutputContainer">
                         <p>Select a report to view its data.</p>
                     </div>
-            </div>
-
-            <div class="report-options">
-                <div class="report-card" onclick="generateReport('satisfaction')">
-                    <i class="fas fa-chart-bar"></i>
-                    <h3>Satisfaction Report</h3>
-                    <p>Organization-level participant satisfaction summary</p>
                 </div>
 
-                <div class="report-card" onclick="generateReport('staffing')">
-                    <i class="fas fa-users"></i>
-                    <h3>Staffing Report</h3>
-                    <p>Volunteer support and event staffing status</p>
-                </div>
+                <div class="report-options">
+                    <div class="report-card" onclick="generateReport('satisfaction')">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Satisfaction Report</h3>
+                        <p>Organization-level participant satisfaction summary</p>
+                    </div>
 
-                <div class="report-card" onclick="generateReport('events')">
-                    <i class="fas fa-calendar"></i>
-                    <h3>Event Summary</h3>
-                    <p>Event-level participation, staffing, and satisfaction overview</p>
-                </div>
+                    <div class="report-card" onclick="generateReport('staffing')">
+                        <i class="fas fa-users"></i>
+                        <h3>Staffing Report</h3>
+                        <p>Volunteer support and event staffing status</p>
+                    </div>
 
-                <div class="report-card" onclick="generateReport('impact')">
-                    <i class="fas fa-heart"></i>
-                    <h3>Retention Report</h3>
-                    <p>Participant visit frequency and retention trends</p>
-                </div>
-            </div>
-    </div>
+                    <div class="report-card" onclick="generateReport('events')">
+                        <i class="fas fa-calendar"></i>
+                        <h3>Event Summary</h3>
+                        <p>Event-level participation, staffing, and satisfaction overview</p>
+                    </div>
 
-    <div id="adminPage" class="page">
-        <div class="page-header">
-            <h2>Admin User Management</h2>
-        </div>
-
-        <div class="data-card">
-            <div class="card-header">
-                <h3>Create or Update User Role</h3>
-            </div>
-
-            <div class="admin-form-grid">
-                <div class="form-group">
-                    <label for="adminUserEmail">User Email</label>
-                    <input type="email" id="adminUserEmail" placeholder="user@example.com">
-                </div>
-                <div class="form-group">
-                    <label for="adminUserRole">Role</label>
-                    <select id="adminUserRole" class="filter-select">
-                        <option value="admin">Admin</option>
-                        <option value="viewer">Viewer</option>
-                    </select>
+                    <div class="report-card" onclick="generateReport('impact')">
+                        <i class="fas fa-heart"></i>
+                        <h3>Retention Report</h3>
+                        <p>Participant visit frequency and retention trends</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="admin-actions-row">
-                <button class="btn-primary" id="saveUserRoleBtn">
-                    <i class="fas fa-save"></i> Save Role
-                </button>
-            </div>
+            <div id="adminPage" class="page">
+                <div class="page-header">
+                    <h2>Admin User Management</h2>
+                </div>
 
-            <p id="adminMessage" class="admin-message"></p>
-        </div>
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>Create or Update User Role</h3>
+                    </div>
 
-        <div class="data-card">
-            <div class="card-header">
-                <h3>Existing User Roles</h3>
-                <button class="btn-primary-sm" id="refreshAdminUsersBtn">
-                    <i class="fas fa-rotate"></i> Refresh
-                </button>
-            </div>
+                    <div class="admin-form-grid">
+                        <div class="form-group">
+                            <label for="adminUserEmail">User Email</label>
+                            <input type="email" id="adminUserEmail" placeholder="user@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminUserRole">Role</label>
+                            <select id="adminUserRole" class="filter-select">
+                                <option value="admin">Admin</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
+                        </div>
+                    </div>
 
-            <div class="table-responsive">
-                <table class="data-table" id="adminUsersTable">
-                    <thead>
-                        <tr>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Updated</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminUsersBody"></tbody>
-                </table>
+                    <div class="admin-actions-row">
+                        <button class="btn-primary" id="saveUserRoleBtn">
+                            <i class="fas fa-save"></i> Save Role
+                        </button>
+                    </div>
+
+                    <p id="adminMessage" class="admin-message"></p>
+                </div>
+
+                <div class="data-card">
+                    <div class="card-header">
+                        <h3>Existing User Roles</h3>
+                        <button class="btn-primary-sm" id="refreshAdminUsersBtn">
+                            <i class="fas fa-rotate"></i> Refresh
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table" id="adminUsersTable">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Updated</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersBody"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    </main>
+        </main>
     </div>
 
     <div id="eventModal" class="modal">
@@ -544,6 +679,8 @@
             </div>
         </div>
     </div>
+
+
 
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="spinner"></div>

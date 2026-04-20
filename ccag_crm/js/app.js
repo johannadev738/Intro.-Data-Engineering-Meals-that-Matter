@@ -1782,6 +1782,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
+
+    const orgForm = document.getElementById('orgForm');
+    if (orgForm) {
+        orgForm.addEventListener('submit', saveOrganizationRecord);
+    }
+
     const saveUserRoleBtn = document.getElementById('saveUserRoleBtn');
     if (saveUserRoleBtn) {
         saveUserRoleBtn.addEventListener('click', async () => {
@@ -2217,6 +2223,61 @@ window.showAddPipelineModal = function () {
 
     if (modal) modal.style.display = 'flex';
 };
+
+
+window.showAddOrgModal = function () {
+    const modal = document.getElementById('orgModal');
+    const form = document.getElementById('orgForm');
+
+    if (form) form.reset();
+    if (modal) modal.style.display = 'flex';
+};
+
+window.closeOrgModal = function () {
+    const modal = document.getElementById('orgModal');
+    if (modal) modal.style.display = 'none';
+};
+
+async function saveOrganizationRecord(e) {
+    e.preventDefault();
+
+    const supabaseClient = window.supabaseClient || window.ccagSupabase?.client;
+    if (!supabaseClient) return;
+
+    const orgName = document.getElementById('orgName')?.value?.trim();
+    const contact = document.getElementById('orgContact')?.value?.trim() || '';
+    const email = document.getElementById('orgEmail')?.value?.trim() || '';
+    const phone = document.getElementById('orgPhone')?.value?.trim() || '';
+
+    if (!orgName) {
+        alert('Organization name is required.');
+        return;
+    }
+
+    const payload = {
+        form_type: 'organization',
+        submitted_at: new Date().toISOString(),
+        organization_name: orgName,
+        response_data: {
+            organization_name: orgName,
+            contact_person: contact,
+            organization_email: email,
+            organization_phone: phone
+        }
+    };
+
+    const { error } = await supabaseClient
+        .from('form_responses')
+        .insert(payload);
+
+    if (error) {
+        alert(`Failed to save organization: ${error.message}`);
+        return;
+    }
+
+    closeOrgModal();
+    await loadAllData();
+}
 
 window.closePipelineModal = function () {
     const modal = document.getElementById('pipelineModal');

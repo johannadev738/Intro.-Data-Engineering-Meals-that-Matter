@@ -25,6 +25,9 @@ body {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
+    left: 0;
+    top: 0;
+    z-index: 1000;
 }
 
 .logo {
@@ -58,7 +61,8 @@ body {
     transition: all 0.3s;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover,
+.nav-item.active {
     background: rgba(255,255,255,0.15);
     color: white;
 }
@@ -129,6 +133,8 @@ body {
 .main-content {
     flex: 1;
     margin-left: 280px;
+    width: calc(100% - 280px);
+    min-width: 0;
 }
 
 .header {
@@ -151,6 +157,7 @@ body {
     padding: 8px 16px;
     border-radius: 40px;
     width: 320px;
+    min-width: 0;
 }
 
 .header-search i {
@@ -210,10 +217,15 @@ body {
 .page {
     display: none;
     padding: 32px;
+    min-width: 0;
 }
 
 .page.active {
     display: block;
+}
+
+#pipelinePage {
+    overflow: hidden;
 }
 
 .page-header {
@@ -372,7 +384,8 @@ body {
     margin-bottom: 32px;
 }
 
-.chart-card, .data-card {
+.chart-card,
+.data-card {
     background: white;
     border-radius: 16px;
     padding: 24px;
@@ -418,7 +431,8 @@ body {
     background: #F5F7FA;
 }
 
-.data-table th, .data-table td {
+.data-table th,
+.data-table td {
     padding: 14px 16px;
     text-align: left;
     border-bottom: 1px solid #E0E0E0;
@@ -544,7 +558,8 @@ body {
     margin: 24px 0;
 }
 
-.filter-input, .filter-select {
+.filter-input,
+.filter-select {
     padding: 10px 16px;
     border: 1px solid #E0E0E0;
     border-radius: 8px;
@@ -672,7 +687,9 @@ body {
     font-size: 14px;
 }
 
-.form-group input, .form-group select, .form-group textarea {
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #E0E0E0;
@@ -799,7 +816,117 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Pipeline */
+.pipeline-board {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    align-items: start;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+}
+
+.pipeline-column {
+    background: #f7f8fa;
+    border-radius: 14px;
+    padding: 12px;
+    min-height: 360px;
+    min-width: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.pipeline-column h3 {
+    font-size: 14px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    word-break: break-word;
+}
+
+.pipeline-column-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pipeline-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    font-weight: 600;
+    font-size: 14px;
+    width: 100%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.pipeline-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.pipeline-empty {
+    color: #888;
+    font-size: 14px;
+    padding: 10px 0;
+}
+
+.pipeline-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.pipeline-detail-card {
+    background: #f8f9fb;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.pipeline-detail-card p {
+    margin: 6px 0;
+}
+
+.badge-participant {
+    background: #4CAF50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+.badge-volunteer {
+    background: #2196F3;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+.badge-staff {
+    background: #FF9800;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+.badge-organization {
+    background: #9C27B0;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
 }
 
 @media (max-width: 1024px) {
@@ -832,6 +959,7 @@ body {
 
     .main-content {
         margin-left: 0;
+        width: 100%;
     }
 
     .header {
@@ -854,9 +982,12 @@ body {
         width: 100%;
         flex-wrap: wrap;
     }
+
+    .pipeline-board {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .sidebar-footer {
         display: none;
@@ -908,82 +1039,16 @@ body {
     .events-grid,
     .orgs-grid,
     .report-options,
-    .analytics-container {
+    .analytics-container,
+    .pipeline-board {
         grid-template-columns: 1fr;
     }
 
     .filter-bar {
         flex-direction: column;
     }
-}
 
-.pipeline-board {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(200px, 1fr));
-    gap: 16px;
-    align-items: start;
-    overflow-x: auto;
-    padding-bottom: 12px;
+    .pipeline-detail-grid {
+        grid-template-columns: 1fr;
+    }
 }
-
-.pipeline-column {
-    background: #f7f8fa;
-    border-radius: 14px;
-    padding: 14px;
-    min-height: 350px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.pipeline-column h3 {
-    font-size: 16px;
-    margin-bottom: 12px;
-}
-
-.pipeline-column-body {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.pipeline-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 12px;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    font-weight: 600;
-}
-
-.pipeline-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-}
-
-.pipeline-empty {
-    color: #888;
-    font-size: 14px;
-    padding: 10px 0;
-}
-
-.pipeline-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-top: 12px;
-}
-
-.pipeline-detail-card {
-    background: #f8f9fb;
-    border-radius: 12px;
-    padding: 12px;
-}
-
-.pipeline-detail-card p {
-    margin: 6px 0;
-}
-
-.badge-participant { background: #4CAF50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; }
-.badge-volunteer { background: #2196F3; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; }
-.badge-staff { background: #FF9800; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; }
-.badge-organization { background: #9C27B0; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; }
